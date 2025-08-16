@@ -1,0 +1,78 @@
+# ctx files
+.ctx/
+
+# Environment files
+.env
+.env.local
+
+# IDE and AI Assistant Rules/Instructions
+.cursor/
+.windsurf/
+.aiassistant/
+.github/
+.aider.conf.yml
+.rules
+CLAUDE.md
+GEMINI.md
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# Binary executables
+ctx
+server/server
+/ctx
+/server/server
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.claude/
+
+# Test coverage
+*.cover
+*.coverprofile
+coverage.txt
+
+# Dependency directories
+vendor/
+
+# Environment files
+.env
+.env.local
+server/.env
+
+# Debug files
+debug
+__debug_bin
+
+# Temporary files
+*.tmp
+tmp/
+stream_output.txt
+test-config.yaml
+
+# Log files
+*.log
+*.log.*
+logs/
+server.log
+test/server.log
+
+# User files
+TODO.md
+AGENT.md
+
+# Empty directories
+server/migrations/
