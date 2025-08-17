@@ -171,44 +171,60 @@ func TestTokenizerCacheConcurrency(t *testing.T) {
 
 func TestIsGeminiModel(t *testing.T) {
 	tests := []struct {
-		model string
-		want  bool
+		provider string
+		want     bool
 	}{
-		{"gemini-1.5-flash", true},
-		{"gemini-1.5-pro", true},
-		{"gemini-2.0-flash-exp", true},
-		{"Gemini-1.5-Flash", true}, // Case insensitive
-		{"gpt-4", false},
-		{"claude-3-opus", false},
+		{"gemini", true},
+		{"Gemini", true}, // Case insensitive
+		{"GEMINI", true}, // Case insensitive
+		{"openai", false},
+		{"anthropic", false},
+		{"claude", false},
 		{"", false},
 	}
 	
 	for _, tt := range tests {
-		t.Run(tt.model, func(t *testing.T) {
-			if got := IsGeminiModel(tt.model); got != tt.want {
-				t.Errorf("IsGeminiModel(%q) = %v, want %v", tt.model, got, tt.want)
+		t.Run(tt.provider, func(t *testing.T) {
+			if got := IsGeminiModel(tt.provider); got != tt.want {
+				t.Errorf("IsGeminiModel(%q) = %v, want %v", tt.provider, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestIsTiktokenModel(t *testing.T) {
+// TestIsTiktokenProvider tests if a provider uses tiktoken for tokenization
+func TestIsTiktokenProvider(t *testing.T) {
 	tests := []struct {
-		model string
-		want  bool
+		provider string
+		want     bool
 	}{
-		{"gpt-4", true},
-		{"gpt-3.5-turbo", true},
-		{"claude-3-opus", true},
-		{"claude-4.1-opus", true},
-		{"gemini-1.5-flash", false},
-		{"", true}, // Empty defaults to tiktoken
+		{"openai", true},
+		{"anthropic", true},
+		{"gemini", false},
+		{"unknown", false},
 	}
 	
 	for _, tt := range tests {
-		t.Run(tt.model, func(t *testing.T) {
-			if got := IsTiktokenModel(tt.model); got != tt.want {
-				t.Errorf("IsTiktokenModel(%q) = %v, want %v", tt.model, got, tt.want)
+		t.Run(tt.provider, func(t *testing.T) {
+			// Check by trying to create tokenizer and seeing if it's tiktoken-based
+			factory := &DefaultTokenizerFactory{}
+			tokenizer, err := factory.CreateTokenizer(tt.provider)
+			
+			if tt.provider == "unknown" {
+				if err == nil {
+					t.Errorf("Expected error for unknown provider %q", tt.provider)
+				}
+				return
+			}
+			
+			if err != nil && tt.want {
+				t.Errorf("Failed to create tokenizer for %q: %v", tt.provider, err)
+				return
+			}
+			
+			_, isTiktoken := tokenizer.(*TiktokenTokenizer)
+			if isTiktoken != tt.want {
+				t.Errorf("Provider %q: got tiktoken=%v, want %v", tt.provider, isTiktoken, tt.want)
 			}
 		})
 	}
@@ -218,69 +234,71 @@ func TestDefaultTokenizerFactory(t *testing.T) {
 	factory := &DefaultTokenizerFactory{}
 	
 	tests := []struct {
-		model     string
+		provider  string
 		wantError bool
 	}{
-		{"gpt-4", false},
-		{"claude-3-opus", false},
-		// Note: Gemini will fail without proper setup, but that's expected
-		{"", true}, // Empty model should error
+		{"openai", false},
+		{"anthropic", false},
+		{"gemini", false},
+		{"unknown", true}, // Unknown provider should error
+		{"", true}, // Empty provider should error
 	}
 	
 	for _, tt := range tests {
-		t.Run(tt.model, func(t *testing.T) {
-			_, err := factory.CreateTokenizer(tt.model)
+		t.Run(tt.provider, func(t *testing.T) {
+			_, err := factory.CreateTokenizer(tt.provider)
 			if (err != nil) != tt.wantError {
-				t.Errorf("CreateTokenizer(%q) error = %v, wantError %v", tt.model, err, tt.wantError)
+				t.Errorf("CreateTokenizer(%q) error = %v, wantError %v", tt.provider, err, tt.wantError)
 			}
 		})
 	}
 }
 
-func TestGetSupportedModels(t *testing.T) {
-	models := GetSupportedModels()
-	if len(models) == 0 {
-		t.Error("GetSupportedModels() should return non-empty list")
+func TestGetSupportedProviders(t *testing.T) {
+	providers := GetSupportedProviders()
+	if len(providers) == 0 {
+		t.Error("GetSupportedProviders() should return non-empty list")
 	}
 	
-	// Check that both Gemini and Tiktoken models are included
-	hasGemini := false
-	hasTiktoken := false
+	// Check that all expected providers are included
+	expected := map[string]bool{
+		"anthropic": false,
+		"openai":    false,
+		"gemini":    false,
+	}
 	
-	for _, model := range models {
-		if strings.Contains(model, "gemini") {
-			hasGemini = true
+	for _, provider := range providers {
+		if _, ok := expected[provider]; ok {
+			expected[provider] = true
 		}
-		if strings.Contains(model, "gpt") || strings.Contains(model, "claude") {
-			hasTiktoken = true
-		}
 	}
 	
-	if !hasGemini {
-		t.Error("GetSupportedModels() should include Gemini models")
-	}
-	if !hasTiktoken {
-		t.Error("GetSupportedModels() should include OpenAI/Claude models")
+	for provider, found := range expected {
+		if !found {
+			t.Errorf("GetSupportedProviders() should include %q", provider)
+		}
 	}
 }
 
-func TestIsModelSupported(t *testing.T) {
+func TestIsProviderSupported(t *testing.T) {
 	tests := []struct {
-		model string
-		want  bool
+		provider string
+		want     bool
 	}{
-		{"gpt-4", true},
-		{"GPT-4", true}, // Case insensitive
-		{"claude-3-opus", true},
-		{"gemini-1.5-flash", true},
-		{"unknown-model", false},
+		{"openai", true},
+		{"OpenAI", true}, // Case insensitive
+		{"anthropic", true},
+		{"ANTHROPIC", true}, // Case insensitive
+		{"gemini", true},
+		{"Gemini", true}, // Case insensitive
+		{"unknown-provider", false},
 		{"", false},
 	}
 	
 	for _, tt := range tests {
-		t.Run(tt.model, func(t *testing.T) {
-			if got := IsModelSupported(tt.model); got != tt.want {
-				t.Errorf("IsModelSupported(%q) = %v, want %v", tt.model, got, tt.want)
+		t.Run(tt.provider, func(t *testing.T) {
+			if got := IsProviderSupported(tt.provider); got != tt.want {
+				t.Errorf("IsProviderSupported(%q) = %v, want %v", tt.provider, got, tt.want)
 			}
 		})
 	}
