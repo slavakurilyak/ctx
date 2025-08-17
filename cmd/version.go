@@ -20,6 +20,7 @@ type VersionInfo struct {
 	Arch          string `json:"arch"`
 }
 
+
 // NewVersionCmd creates the version subcommand
 func NewVersionCmd(version, commit, date string) *cobra.Command {
 	var jsonOutput bool
@@ -66,6 +67,14 @@ func NewVersionCmd(version, commit, date string) *cobra.Command {
 				fmt.Printf("  Build Date:       %s\n", info.BuildDate)
 				fmt.Printf("  Go Version:       %s\n", info.GoVersion)
 				fmt.Printf("  Platform:         %s/%s\n", info.OS, info.Arch)
+				
+				// Add update suggestion for go install users
+				if info.CTXVersion == "dev (built from source)" {
+					fmt.Printf("\n💡 Tip:\n")
+					fmt.Printf("  You installed ctx via 'go install' which doesn't include version info.\n")
+					fmt.Printf("  For proper versioning and auto-updates, use: ctx update\n")
+					fmt.Printf("  Or reinstall with: curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/install-remote.sh | bash\n")
+				}
 				
 				// Add compatibility note
 				fmt.Printf("\nCompatibility:\n")

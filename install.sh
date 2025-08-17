@@ -107,6 +107,26 @@ detect_install_dir() {
     fi
 }
 
+# Detect version information
+detect_version_info() {
+    # Try to get version from git tag
+    if command -v git &> /dev/null && [ -d ".git" ]; then
+        VERSION=$(git describe --tags --exact-match 2>/dev/null || git describe --tags 2>/dev/null || echo "")
+        if [ -z "$VERSION" ]; then
+            VERSION="dev-$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+        fi
+        COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    else
+        VERSION="dev"
+        COMMIT="unknown"
+    fi
+    
+    # Always set the date
+    DATE=$(date -u +%Y-%m-%d 2>/dev/null || echo "unknown")
+    
+    print_info "Version info: $VERSION (commit: $COMMIT, date: $DATE)"
+}
+
 # Build ctx
 build_ctx() {
     print_info "Building ctx..."
@@ -115,9 +135,13 @@ build_ctx() {
     print_info "Downloading dependencies..."
     go mod download
     
-    # Build the binary
-    print_info "Compiling ctx..."
-    go build -o ctx .
+    # Detect version information
+    detect_version_info
+    
+    # Build the binary with version information
+    print_info "Compiling ctx with version $VERSION..."
+    LDFLAGS="-s -w -X main.version=$VERSION -X main.commit=$COMMIT -X main.date=$DATE"
+    go build -ldflags "$LDFLAGS" -o ctx .
     
     if [ ! -f "ctx" ]; then
         print_error "Build failed - ctx binary not created"
@@ -141,6 +165,12 @@ install_ctx() {
     fi
     
     print_info "Installation successful ✓"
+    
+    # Mark installation method in config
+    print_info "Configuring installation method..."
+    "$INSTALL_DIR/ctx" config set-installation install-script 2>/dev/null || {
+        print_warning "Could not set installation method - config will be created on first use"
+    }
 }
 
 # Update PATH if needed
