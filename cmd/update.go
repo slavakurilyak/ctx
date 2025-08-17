@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"github.com/slavakurilyak/ctx/internal/updater"
+	"github.com/slavakurilyak/ctx/internal/version"
 	"github.com/spf13/cobra"
 )
 
 // NewUpdateCmd creates the update command
-func NewUpdateCmd(version string) *cobra.Command {
+func NewUpdateCmd() *cobra.Command {
 	var (
 		checkOnly      bool
 		includePrerelease bool
@@ -30,7 +31,7 @@ download and install updates. Use --check to only check for updates without inst
 			
 			// Check for updates
 			fmt.Println("Checking for updates...")
-			updateInfo, err := upd.CheckForUpdate(version, includePrerelease)
+			updateInfo, err := upd.CheckForUpdate(version.GetVersion(), includePrerelease)
 			if err != nil {
 				return fmt.Errorf("failed to check for updates: %w", err)
 			}

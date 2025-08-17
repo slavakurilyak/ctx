@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/slavakurilyak/ctx/internal/version"
 )
 
 // Client represents the ctx.pro API client
@@ -93,7 +95,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body inter
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
-	req.Header.Set("User-Agent", "ctx-cli/0.1.0")
+	req.Header.Set("User-Agent", version.GetUserAgent())
 
 	return req, nil
 }

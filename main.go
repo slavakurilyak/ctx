@@ -12,11 +12,8 @@ import (
 	"github.com/slavakurilyak/ctx/cmd"
 )
 
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-)
+// These variables are replaced by ldflags during build
+// They are kept here for compatibility but internal/version is the source of truth
 
 func main() {
 	// Load .env file if it exists (ignore error if not found)
@@ -24,7 +21,7 @@ func main() {
 	
 	// We no longer pre-build the AppContext here.
 	// It will be constructed in PersistentPreRunE after flags are parsed.
-	rootCmd := cmd.NewRootCmdWithDI(version, commit, date)
+	rootCmd := cmd.NewRootCmdWithDI()
 
 	// Disable Cobra's default error handling to manage exit codes manually
 	rootCmd.SilenceErrors = true

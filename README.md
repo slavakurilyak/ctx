@@ -11,13 +11,13 @@
 
 > **Slash AI costs by 95%: From $1,125 to just $10/month - the price of the upcoming ctx Pro subscription!**
 
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/slavakurilyak/ctx/releases)
+[![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)](https://github.com/slavakurilyak/ctx/releases)
 [![Beta](https://img.shields.io/badge/status-beta-yellow.svg)](docs/VERSIONING.md)
 [![Schema](https://img.shields.io/badge/schema-0.1-purple.svg)](docs/VERSIONING.md)
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Beta Software**: `ctx` is in beta (v0.1.0). The API and schema may change. See [VERSIONING.md](docs/VERSIONING.md) for details.
+**Beta Software**: `ctx` is in beta (v0.1.1). The API and schema may change. See [CHANGELOG.md](docs/CHANGELOG.md) for release history.
 
 Modern AI agents struggle with external tools because raw command output is token-expensive, unstructured, and lacks metadata. This wastes context windows and drives up costs.
 
@@ -42,6 +42,7 @@ Modern AI agents struggle with external tools because raw command output is toke
 | **GitHub Copilot** | [Official site](https://github.com/features/copilot) \| [Docs](https://docs.github.com/en/copilot) | ✓ (via `ctx setup github-copilot`) |
 | **Windsurf** | [Official site](https://windsurf.ai/) \| [GitHub](https://github.com/Windsurf-AI/windsurf) \| [Docs](https://docs.windsurf.com/) | ✓ (via `ctx setup windsurf`) |
 | **Cline** | [Official site](https://cline.bot/) \| [GitHub](https://github.com/re-search/cline) | ✓ (via `ctx setup cline`) |
+| **Goose** | [Official site](https://block.github.io/goose/) \| [GitHub](https://github.com/block/goose) \| [Docs](https://block.github.io/goose/docs/) | ✓ (via `ctx setup goose`) |
 | **Visual Studio Code** | [Official site](https://code.visualstudio.com/) \| [GitHub](https://github.com/microsoft/vscode) \| [Docs](https://code.visualstudio.com/docs) | ✗ |
 | **Visual Studio 2022** | [Official site](https://visualstudio.microsoft.com/) \| [Docs](https://learn.microsoft.com/en-us/visualstudio/windows/) | ✗ |
 | **Opencode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✗ |
@@ -161,6 +162,7 @@ ctx setup aider         # Aider
 ctx setup windsurf      # Windsurf IDE
 ctx setup jetbrains     # JetBrains AI Assistant
 ctx setup gemini        # Gemini CLI
+ctx setup goose         # Goose AI Agent
 
 # See all supported tools:
 ctx setup
@@ -199,6 +201,7 @@ ctx setup claude    # Explicit Claude Code setup
 ctx setup cursor    # Cursor IDE
 ctx setup aider     # Aider
 ctx setup windsurf  # Windsurf IDE
+ctx setup goose     # Goose AI Agent
 ctx setup jetbrains # JetBrains AI Assistant
 ctx setup gemini    # Gemini CLI
 ```

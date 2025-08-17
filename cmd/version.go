@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/slavakurilyak/ctx/internal/models"
+	"github.com/slavakurilyak/ctx/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +23,7 @@ type VersionInfo struct {
 
 
 // NewVersionCmd creates the version subcommand
-func NewVersionCmd(version, commit, date string) *cobra.Command {
+func NewVersionCmd() *cobra.Command {
 	var jsonOutput bool
 
 	cmd := &cobra.Command{
@@ -31,24 +32,13 @@ func NewVersionCmd(version, commit, date string) *cobra.Command {
 		Long:  `Display detailed version information about ctx, including software version, schema version, and build details.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			info := VersionInfo{
-				CTXVersion:    version,
+				CTXVersion:    version.GetVersion(),
 				SchemaVersion: models.CurrentSchemaVersion,
-				Commit:        commit,
-				BuildDate:     date,
+				Commit:        version.Commit,
+				BuildDate:     version.Date,
 				GoVersion:     runtime.Version(),
 				OS:            runtime.GOOS,
 				Arch:          runtime.GOARCH,
-			}
-
-			// Handle development builds
-			if info.CTXVersion == "dev" || info.CTXVersion == "" {
-				info.CTXVersion = "dev (built from source)"
-			}
-			if info.Commit == "none" || info.Commit == "" {
-				info.Commit = "unknown"
-			}
-			if info.BuildDate == "unknown" || info.BuildDate == "" {
-				info.BuildDate = "unknown"
 			}
 
 			if jsonOutput {
@@ -69,7 +59,7 @@ func NewVersionCmd(version, commit, date string) *cobra.Command {
 				fmt.Printf("  Platform:         %s/%s\n", info.OS, info.Arch)
 				
 				// Add update suggestion for go install users
-				if info.CTXVersion == "dev (built from source)" {
+				if version.Version == "dev" {
 					fmt.Printf("\nTip:\n")
 					fmt.Printf("  You installed ctx via 'go install' which doesn't include version info.\n")
 					fmt.Printf("  For proper versioning and auto-updates, use: ctx update\n")

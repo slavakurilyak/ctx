@@ -13,11 +13,12 @@ import (
 	"github.com/slavakurilyak/ctx/internal/telemetry"
 	"github.com/slavakurilyak/ctx/internal/tokenizer"
 	"github.com/slavakurilyak/ctx/internal/updater"
+	"github.com/slavakurilyak/ctx/internal/version"
 	"github.com/spf13/cobra"
 )
 
 // NewRootCmdWithDI creates a new root command with dependency injection
-func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
+func NewRootCmdWithDI() *cobra.Command {
 	// Build the complete help text
 	helpText := StyledDescription("Run context (ctx) command to wrap any tool (CLI, shell script, etc) with token awareness/intelligence (example: token count) to empower token-based decisions before and during command execution.") + "\n\n" +
 		StyledHeader("USAGE:") + "\n\n" +
@@ -104,7 +105,7 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 			cmd.SetContext(newCmdCtx)
 
 			// 7. Check for updates if enabled (non-blocking)
-			go checkForUpdatesIfNeeded(cfg, version)
+			go checkForUpdatesIfNeeded(cfg)
 
 			return nil
 		},
@@ -161,7 +162,7 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 	rootCmd.PersistentFlags().Bool("pretty", false, "Output in pretty format instead of JSON.")
 
 	// Version flag
-	rootCmd.Version = fmt.Sprintf("%s, commit %s, built at %s", version, commit, date)
+	rootCmd.Version = fmt.Sprintf("%s, commit %s, built at %s", version.Version, version.Commit, version.Date)
 	rootCmd.Flags().Bool("version", false, "Show ctx version")
 
 	// Add telemetry subcommand
@@ -171,7 +172,7 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 	rootCmd.AddCommand(NewConfigCmd())
 	
 	// Add version subcommand
-	rootCmd.AddCommand(NewVersionCmd(version, commit, date))
+	rootCmd.AddCommand(NewVersionCmd())
 	
 	// Add run subcommand for explicit command execution
 	rootCmd.AddCommand(NewRunCmd())
@@ -185,7 +186,7 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 	rootCmd.AddCommand(NewAccountCmd())
 	
 	// Add update command
-	rootCmd.AddCommand(NewUpdateCmd(version))
+	rootCmd.AddCommand(NewUpdateCmd())
 
 	return rootCmd
 }
@@ -199,7 +200,7 @@ func parseQuotedCommand(cmdStr string) []string {
 }
 
 // checkForUpdatesIfNeeded checks for updates in the background if conditions are met
-func checkForUpdatesIfNeeded(cfg *config.Config, currentVersion string) {
+func checkForUpdatesIfNeeded(cfg *config.Config) {
 	// Only check if installation method supports auto-updates
 	if cfg.Installation == nil || !cfg.Installation.AutoUpdateCheck {
 		return
@@ -216,7 +217,7 @@ func checkForUpdatesIfNeeded(cfg *config.Config, currentVersion string) {
 	}
 	
 	// Skip if version is unknown/dev (can't compare)
-	if currentVersion == "dev" || currentVersion == "" || strings.Contains(currentVersion, "built from source") {
+	if version.Version == "dev" || version.Version == "" || strings.Contains(version.GetVersion(), "built from source") {
 		return
 	}
 	
@@ -224,7 +225,7 @@ func checkForUpdatesIfNeeded(cfg *config.Config, currentVersion string) {
 	upd := updater.NewUpdater("slavakurilyak", "ctx")
 	upd.HTTPClient.Timeout = 5 * time.Second // Quick check
 	
-	updateInfo, err := upd.CheckForUpdate(currentVersion, false)
+	updateInfo, err := upd.CheckForUpdate(version.GetVersion(), false)
 	if err != nil {
 		// Silently fail - this is non-critical background check
 		return

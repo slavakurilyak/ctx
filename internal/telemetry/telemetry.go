@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 	
+	"github.com/slavakurilyak/ctx/internal/version"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
@@ -18,7 +19,6 @@ import (
 
 const (
 	serviceName = "ctx"
-	serviceVersion = "0.1.0"
 )
 
 type Manager struct {
@@ -207,7 +207,7 @@ func createResource(ctx context.Context) (*resource.Resource, error) {
 	return resource.NewWithAttributes(
 		"",
 		attribute.String("service.name", serviceName),
-		attribute.String("service.version", serviceVersion),
+		attribute.String("service.version", version.GetVersion()),
 		attribute.String("host.name", hostname),
 		attribute.String("user.name", user),
 		attribute.String("os.type", getOSType()),

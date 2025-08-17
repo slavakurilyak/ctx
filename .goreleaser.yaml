@@ -1,0 +1,83 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: ctx
+    main: ./main.go
+    binary: ctx
+    ldflags:
+      - -s -w
+      - -X github.com/slavakurilyak/ctx/internal/version.Version={{.Version}}
+      - -X github.com/slavakurilyak/ctx/internal/version.Commit={{.Commit}}
+      - -X github.com/slavakurilyak/ctx/internal/version.Date={{.Date}}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - name_template: >-
+      ctx_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    # Build archives in both tar.gz and zip formats
+    formats:
+      - tar.gz
+      - zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  groups:
+    - title: '🚀 Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: '🐛 Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: '📚 Documentation'
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: '⚡ Performance'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: '♻️ Refactoring'
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: '🔧 Other'
+      order: 999
+
+release:
+  github:
+    owner: slavakurilyak
+    name: ctx
+  header: |
+    ## ctx v{{.Version}}
+    
+    **Full Changelog**: https://github.com/slavakurilyak/ctx/compare/{{.PreviousTag}}...{{.Tag}}
+  footer: |
+    ---
+    
+    ### Installation
+    
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/install-remote.sh | bash
+    ```
+    
+    Or download the binary for your platform from the assets below.

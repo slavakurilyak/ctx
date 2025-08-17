@@ -11,13 +11,13 @@ GO_GET=$(GO_CMD) get
 GO_MOD=$(GO_CMD) mod
 INSTALL_PATH?=$(HOME)/bin
 
-# Version info
-VERSION?=0.1.0
+# Version info - now uses git tags as source of truth
+VERSION?=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 COMMIT?=$(shell git rev-parse --short HEAD 2>/dev/null || echo "local")
 DATE?=$(shell date -u +%Y-%m-%d)
 
-# Build flags
-LDFLAGS=-ldflags "-s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)"
+# Build flags - updated to use internal/version package
+LDFLAGS=-ldflags "-s -w -X github.com/slavakurilyak/ctx/internal/version.Version=$(VERSION) -X github.com/slavakurilyak/ctx/internal/version.Commit=$(COMMIT) -X github.com/slavakurilyak/ctx/internal/version.Date=$(DATE)"
 
 # Detect OS and architecture
 GOOS?=$(shell go env GOOS)

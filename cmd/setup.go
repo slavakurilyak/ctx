@@ -54,6 +54,7 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewKiloCodeCmd())
 	setupCmd.AddCommand(setup.NewGeminiCmd())
 	setupCmd.AddCommand(setup.NewClineCmd())
+	setupCmd.AddCommand(setup.NewGooseCmd())
 
 	return setupCmd
 }
@@ -103,6 +104,7 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup cline         # Cline")
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
+	fmt.Println("  ctx setup goose         # Goose AI Agent")
 	fmt.Println()
 	fmt.Println("Choose the tool you're using, then run the specific command.")
 	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")
