@@ -70,7 +70,7 @@ func NewVersionCmd(version, commit, date string) *cobra.Command {
 				
 				// Add update suggestion for go install users
 				if info.CTXVersion == "dev (built from source)" {
-					fmt.Printf("\n💡 Tip:\n")
+					fmt.Printf("\nTip:\n")
 					fmt.Printf("  You installed ctx via 'go install' which doesn't include version info.\n")
 					fmt.Printf("  For proper versioning and auto-updates, use: ctx update\n")
 					fmt.Printf("  Or reinstall with: curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/install-remote.sh | bash\n")

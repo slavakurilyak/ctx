@@ -90,7 +90,7 @@ func setupClaudeCode(force bool) error {
 
 // showAvailableTools displays available tools for human users
 func showAvailableTools() error {
-	fmt.Println("🔧 Available AI Tools for Setup:")
+	fmt.Println("Available AI Tools for Setup:")
 	fmt.Println()
 	fmt.Println("  ctx setup claude        # Claude Code/Desktop")
 	fmt.Println("  ctx setup cursor        # Cursor IDE")
@@ -104,8 +104,8 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
 	fmt.Println()
-	fmt.Println("💡 Choose the tool you're using, then run the specific command.")
-	fmt.Println("   For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")
+	fmt.Println("Choose the tool you're using, then run the specific command.")
+	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")
 	fmt.Println()
 	
 	return nil

@@ -270,13 +270,13 @@ Valid methods:
 				return fmt.Errorf("failed to save installation method: %w", err)
 			}
 			
-			fmt.Printf("✅ Installation method set to: %s\n", method)
+			fmt.Printf("Installation method set to: %s\n", method)
 			
 			// Show update capability
 			if method == "install-script" || method == "pre-built" || method == "manual" {
-				fmt.Println("💡 Auto-updates enabled. Use 'ctx update' to update to the latest version.")
+				fmt.Println("Auto-updates enabled. Use 'ctx update' to update to the latest version.")
 			} else {
-				fmt.Println("ℹ️  Manual updates only. Use 'go install github.com/slavakurilyak/ctx@latest' to update.")
+				fmt.Println("Manual updates only. Use 'go install github.com/slavakurilyak/ctx@latest' to update.")
 			}
 			
 			return nil

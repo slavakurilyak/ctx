@@ -62,10 +62,10 @@ install: build
 	@echo "Installed successfully to $(INSTALL_PATH)/$(BINARY_NAME)"
 	@echo ""
 	@if echo $$PATH | grep -q "$(INSTALL_PATH)"; then \
-		echo "✓ $(INSTALL_PATH) is in PATH"; \
+		echo "$(INSTALL_PATH) is in PATH"; \
 		echo "You can now use: ctx <command>"; \
 	else \
-		echo "⚠️  $(INSTALL_PATH) is not in PATH"; \
+		echo "Warning: $(INSTALL_PATH) is not in PATH"; \
 		echo "Add this to your shell config:"; \
 		echo "  export PATH=\"$(INSTALL_PATH):$$PATH\""; \
 	fi

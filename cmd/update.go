@@ -40,12 +40,12 @@ download and install updates. Use --check to only check for updates without inst
 			fmt.Printf("Latest version:  %s\n", updateInfo.LatestVersion)
 
 			if !updateInfo.UpdateNeeded && !force {
-				fmt.Println("✓ You are running the latest version!")
+				fmt.Println("You are running the latest version!")
 				return nil
 			}
 
 			if updateInfo.UpdateNeeded {
-				fmt.Printf("🔄 Update available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)
+				fmt.Printf("Update available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)
 			}
 
 			// If only checking, stop here
@@ -58,7 +58,7 @@ download and install updates. Use --check to only check for updates without inst
 
 			// Check if we can update (has download URL)
 			if updateInfo.UpdateURL == "" {
-				fmt.Println("❌ No binary available for your platform")
+				fmt.Println("No binary available for your platform")
 				fmt.Printf("   Platform: %s\n", getPlatformString())
 				fmt.Println("   Please download manually from: https://github.com/slavakurilyak/ctx/releases")
 				return nil
@@ -77,11 +77,11 @@ download and install updates. Use --check to only check for updates without inst
 				return fmt.Errorf("update failed: %w", err)
 			}
 
-			fmt.Printf("✅ Successfully updated to %s!\n", updateInfo.LatestVersion)
+			fmt.Printf("Successfully updated to %s!\n", updateInfo.LatestVersion)
 			
 			// Show release notes if available
 			if updateInfo.ReleaseNotes != "" && updateInfo.UpdateNeeded {
-				fmt.Println("\n📋 Release Notes:")
+				fmt.Println("\nRelease Notes:")
 				fmt.Println(strings.Repeat("-", 50))
 				fmt.Println(updateInfo.ReleaseNotes)
 			}

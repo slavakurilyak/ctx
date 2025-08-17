@@ -109,27 +109,27 @@ curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/insta
 ```
 
 **Features:**
-- ✅ Full version information
-- ✅ Auto-update notifications  
-- ✅ `ctx update` command support
-- ✅ Proper build metadata
+- Full version information
+- Auto-update notifications  
+- `ctx update` command support
+- Proper build metadata
 
 ### Alternative Methods
 
 **Pre-built Releases (Full Features):**
 Download binaries from the [**Releases page**](https://github.com/slavakurilyak/ctx/releases/latest).
-- ✅ Full version information
-- ✅ `ctx update` command support  
-- ❌ No auto-update notifications
+- Full version information
+- `ctx update` command support  
+- No auto-update notifications
 
 **Go Install (Limited Features):**
 ```bash
 go install github.com/slavakurilyak/ctx@latest
 ```
-- ❌ Shows "ctx version unknown (built from source)"
-- ❌ No auto-update capabilities
-- ✅ Automatic Go module updates
-- 💡 **Tip:** Run `ctx update` after installing to upgrade to a full-featured version
+- Shows "ctx version unknown (built from source)"
+- No auto-update capabilities
+- Automatic Go module updates
+- **Tip:** Run `ctx update` after installing to upgrade to a full-featured version
 
 ### Updating ctx
 

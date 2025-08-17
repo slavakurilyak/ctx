@@ -238,7 +238,7 @@ verify_installation() {
             echo "  ctx git status"
             echo "  ctx docker ps"
             echo ""
-            echo -e "${GREEN}🚀 Next Steps - Set up your AI coding assistant:${NC}"
+            echo -e "${GREEN}Next Steps - Set up your AI coding assistant:${NC}"
             echo ""
             echo "  ctx setup claude     # Claude Code/Desktop"
             echo "  ctx setup cursor     # Cursor IDE"

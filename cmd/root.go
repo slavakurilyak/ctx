@@ -236,7 +236,7 @@ func checkForUpdatesIfNeeded(cfg *config.Config, currentVersion string) {
 	
 	// Show update notification if available
 	if updateInfo.UpdateNeeded {
-		fmt.Fprintf(os.Stderr, "\n💡 Update available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)
-		fmt.Fprintf(os.Stderr, "   Run 'ctx update' to install the latest version.\n\n")
+		fmt.Fprintf(os.Stderr, "\nUpdate available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)
+		fmt.Fprintf(os.Stderr, "Run 'ctx update' to install the latest version.\n\n")
 	}
 }

@@ -6,14 +6,10 @@ import (
 	"strings"
 )
 
-// CleanHelpOutput removes ANSI escape codes and specific emoji
+// CleanHelpOutput removes ANSI escape codes
 func CleanHelpOutput(input string) string {
-	// Remove emoji
-	output := strings.ReplaceAll(input, "✅", "")
-	output = strings.ReplaceAll(output, "➡️", "")
-	
 	// Remove ANSI escape codes
-	output = strings.ReplaceAll(output, "\x1b[0m", "")
+	output := strings.ReplaceAll(input, "\x1b[0m", "")
 	output = strings.ReplaceAll(output, "\x1b[31m", "")
 	output = strings.ReplaceAll(output, "\x1b[32m", "")
 	output = strings.ReplaceAll(output, "\x1b[33m", "")
