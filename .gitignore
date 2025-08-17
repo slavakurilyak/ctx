@@ -5,16 +5,6 @@
 .env
 .env.local
 
-# IDE and AI Assistant Rules/Instructions
-.cursor/
-.windsurf/
-.aiassistant/
-.github/
-.aider.conf.yml
-.rules
-CLAUDE.md
-GEMINI.md
-
 # Go build artifacts
 *.exe
 *.exe~
@@ -76,3 +66,17 @@ AGENT.md
 
 # Empty directories
 server/migrations/
+
+# IDE and AI Assistant Rules/Instructions
+.cursor/
+.windsurf/
+.aiassistant/
+# Only ignore GitHub Copilot instructions, not the entire .github directory
+.github/copilot-instructions.md
+.aider.conf.yml
+.rules
+.clinerules
+.roo/
+.kilocode/
+CLAUDE.md
+GEMINI.md
