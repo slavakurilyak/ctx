@@ -32,6 +32,16 @@ type Config struct {
 	NoTelemetrySource string // New field to track the source
 	Limits            LimitsConfig
 	Auth              *AuthConfig     `yaml:"auth,omitempty"`
+	Installation      *InstallationConfig `yaml:"installation,omitempty"`
+}
+
+// InstallationConfig tracks how ctx was installed and update preferences
+type InstallationConfig struct {
+	Method               string    `yaml:"method,omitempty"`               // "install-script", "go-install", "manual", "pre-built"
+	AutoUpdateCheck      bool      `yaml:"auto_update_check,omitempty"`    // Whether to check for updates automatically
+	LastUpdateCheck      time.Time `yaml:"last_update_check,omitempty"`    // Last time we checked for updates
+	UpdateCheckInterval  time.Duration `yaml:"update_check_interval,omitempty"` // How often to check (default: 24h)
+	SkipVersions         []string  `yaml:"skip_versions,omitempty"`        // Versions to skip
 }
 
 type AuthConfig struct {
@@ -219,6 +229,18 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			// Initialize empty Auth config if not in file
 			cfg.Auth = &AuthConfig{}
 		}
+		
+		// Merge Installation configuration
+		if fileConfig.Installation != nil {
+			cfg.Installation = fileConfig.Installation
+		} else {
+			// Initialize default Installation config if not in file
+			cfg.Installation = &InstallationConfig{
+				Method:              "unknown",
+				AutoUpdateCheck:     false,
+				UpdateCheckInterval: 24 * time.Hour,
+			}
+		}
 	}
 
 	// 3. Layer on Environment Variables
@@ -369,4 +391,83 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 	}
 	
 	return cfg
+}
+
+// getConfigPath returns the path to the config file
+func getConfigPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(homeDir, ".config", "ctx", "config.yaml"), nil
+}
+
+// SaveConfig saves the configuration to the config file
+func (c *Config) SaveConfig() error {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return err
+	}
+
+	// Ensure config directory exists
+	configDir := filepath.Dir(configPath)
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		return err
+	}
+
+	// Convert to file config struct (for YAML serialization)
+	fileConfig := struct {
+		TokenModel    string               `yaml:"token_model,omitempty"`
+		Timeout       string               `yaml:"timeout,omitempty"`
+		OutputFormat  string               `yaml:"output_format,omitempty"`
+		PrettyOutput  bool                 `yaml:"pretty_output,omitempty"`
+		NoTokens      bool                 `yaml:"no_tokens,omitempty"`
+		NoHistory     bool                 `yaml:"no_history,omitempty"`
+		NoTelemetry   bool                 `yaml:"no_telemetry,omitempty"`
+		Limits        LimitsConfig         `yaml:"limits,omitempty"`
+		Auth          *AuthConfig          `yaml:"auth,omitempty"`
+		Installation  *InstallationConfig  `yaml:"installation,omitempty"`
+	}{
+		TokenModel:   c.TokenModel,
+		OutputFormat: c.OutputFormat,
+		PrettyOutput: c.PrettyOutput,
+		NoTokens:     c.NoTokens,
+		NoHistory:    c.NoHistory,
+		NoTelemetry:  c.NoTelemetry,
+		Limits:       c.Limits,
+		Auth:         c.Auth,
+		Installation: c.Installation,
+	}
+
+	if c.DefaultTimeout > 0 {
+		fileConfig.Timeout = c.DefaultTimeout.String()
+	}
+
+	data, err := yaml.Marshal(fileConfig)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(configPath, data, 0644)
+}
+
+// SetInstallationMethod sets the installation method and saves the config
+func (c *Config) SetInstallationMethod(method string) error {
+	if c.Installation == nil {
+		c.Installation = &InstallationConfig{}
+	}
+	c.Installation.Method = method
+	
+	// Set reasonable defaults for auto-update
+	if method == "install-script" || method == "manual" {
+		c.Installation.AutoUpdateCheck = true
+	} else {
+		c.Installation.AutoUpdateCheck = false
+	}
+	
+	if c.Installation.UpdateCheckInterval == 0 {
+		c.Installation.UpdateCheckInterval = 24 * time.Hour
+	}
+	
+	return c.SaveConfig()
 }

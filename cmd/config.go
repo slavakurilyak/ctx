@@ -20,6 +20,7 @@ func NewConfigCmd() *cobra.Command {
 	}
 
 	configCmd.AddCommand(newConfigViewCmd())
+	configCmd.AddCommand(newConfigSetInstallationCmd())
 
 	return configCmd
 }
@@ -229,5 +230,56 @@ func printHumanReadable(output ConfigOutput) {
 		fmt.Printf("  Max Pipeline Stages: %v (source: %s)\n", output.Limits.MaxPipelineStages.Value, output.Limits.MaxPipelineStages.Source)
 	} else {
 		fmt.Println("  Max Pipeline Stages: not set")
+	}
+}
+
+// newConfigSetInstallationCmd creates the config set-installation subcommand
+func newConfigSetInstallationCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "set-installation <method>",
+		Short: "Set the installation method",
+		Long: `Set how ctx was installed to enable proper update handling.
+
+Valid methods:
+  install-script  - Installed via install script (enables auto-updates)
+  go-install      - Installed via 'go install' (manual updates only)
+  pre-built       - Downloaded pre-built binary (enables auto-updates)  
+  manual          - Manually built and installed (enables auto-updates)`,
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			method := args[0]
+			
+			// Validate method
+			validMethods := []string{"install-script", "go-install", "pre-built", "manual"}
+			valid := false
+			for _, vm := range validMethods {
+				if method == vm {
+					valid = true
+					break
+				}
+			}
+			
+			if !valid {
+				return fmt.Errorf("invalid installation method '%s'. Valid methods: %v", method, validMethods)
+			}
+			
+			// Get current config and set installation method
+			cfg := config.NewFromFlagsAndEnv(cmd)
+			err := cfg.SetInstallationMethod(method)
+			if err != nil {
+				return fmt.Errorf("failed to save installation method: %w", err)
+			}
+			
+			fmt.Printf("✅ Installation method set to: %s\n", method)
+			
+			// Show update capability
+			if method == "install-script" || method == "pre-built" || method == "manual" {
+				fmt.Println("💡 Auto-updates enabled. Use 'ctx update' to update to the latest version.")
+			} else {
+				fmt.Println("ℹ️  Manual updates only. Use 'go install github.com/slavakurilyak/ctx@latest' to update.")
+			}
+			
+			return nil
+		},
 	}
 }
