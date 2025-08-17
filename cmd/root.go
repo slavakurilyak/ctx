@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/slavakurilyak/ctx/internal/app"
 	"github.com/slavakurilyak/ctx/internal/config"
 	"github.com/slavakurilyak/ctx/internal/history"
 	"github.com/slavakurilyak/ctx/internal/telemetry"
 	"github.com/slavakurilyak/ctx/internal/tokenizer"
+	"github.com/slavakurilyak/ctx/internal/updater"
 	"github.com/spf13/cobra"
 )
 
@@ -101,6 +103,9 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 			newCmdCtx := context.WithValue(cmd.Context(), app.AppContextKey, appCtx)
 			cmd.SetContext(newCmdCtx)
 
+			// 7. Check for updates if enabled (non-blocking)
+			go checkForUpdatesIfNeeded(cfg, version)
+
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -178,6 +183,9 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 	rootCmd.AddCommand(NewLoginCmd())
 	rootCmd.AddCommand(NewLogoutCmd())
 	rootCmd.AddCommand(NewAccountCmd())
+	
+	// Add update command
+	rootCmd.AddCommand(NewUpdateCmd(version))
 
 	return rootCmd
 }
@@ -188,4 +196,47 @@ func NewRootCmdWithDI(version, commit, date string) *cobra.Command {
 func parseQuotedCommand(cmdStr string) []string {
 	// Use Fields which handles multiple spaces and gives us clean args
 	return strings.Fields(cmdStr)
+}
+
+// checkForUpdatesIfNeeded checks for updates in the background if conditions are met
+func checkForUpdatesIfNeeded(cfg *config.Config, currentVersion string) {
+	// Only check if installation method supports auto-updates
+	if cfg.Installation == nil || !cfg.Installation.AutoUpdateCheck {
+		return
+	}
+	
+	// Skip if go-install method (can't auto-update)
+	if cfg.Installation.Method == "go-install" {
+		return
+	}
+	
+	// Skip if we've checked recently
+	if time.Since(cfg.Installation.LastUpdateCheck) < cfg.Installation.UpdateCheckInterval {
+		return
+	}
+	
+	// Skip if version is unknown/dev (can't compare)
+	if currentVersion == "dev" || currentVersion == "" || strings.Contains(currentVersion, "built from source") {
+		return
+	}
+	
+	// Perform the update check (with timeout)
+	upd := updater.NewUpdater("slavakurilyak", "ctx")
+	upd.HTTPClient.Timeout = 5 * time.Second // Quick check
+	
+	updateInfo, err := upd.CheckForUpdate(currentVersion, false)
+	if err != nil {
+		// Silently fail - this is non-critical background check
+		return
+	}
+	
+	// Update last check time
+	cfg.Installation.LastUpdateCheck = time.Now()
+	cfg.SaveConfig() // Best effort - ignore errors
+	
+	// Show update notification if available
+	if updateInfo.UpdateNeeded {
+		fmt.Fprintf(os.Stderr, "\n💡 Update available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)
+		fmt.Fprintf(os.Stderr, "   Run 'ctx update' to install the latest version.\n\n")
+	}
 }
