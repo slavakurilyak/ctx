@@ -100,21 +100,54 @@ This simple pattern transforms an expensive operation into a negligible one.
 - **Streaming Support**: Terminate long-running commands in real-time when limits are breached.
 - **Privacy-Aware**: Instantly disable history and telemetry with a `--private` flag.
 
-## Installation
+## Installation & Updates
 
-The recommended method is the one-liner script:
+### Recommended: Install Script (Full Features)
+The recommended method is the one-liner script, which provides full versioning and auto-update capabilities:
 ```bash
 curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/install-remote.sh | bash
 ```
 
-Alternatively, you can use Go or download binaries from the [**Releases page**](https://github.com/slavakurilyak/ctx/releases/latest).
+**Features:**
+- ✅ Full version information
+- ✅ Auto-update notifications  
+- ✅ `ctx update` command support
+- ✅ Proper build metadata
 
+### Alternative Methods
+
+**Pre-built Releases (Full Features):**
+Download binaries from the [**Releases page**](https://github.com/slavakurilyak/ctx/releases/latest).
+- ✅ Full version information
+- ✅ `ctx update` command support  
+- ❌ No auto-update notifications
+
+**Go Install (Limited Features):**
 ```bash
-# With Go
 go install github.com/slavakurilyak/ctx@latest
 ```
+- ❌ Shows "ctx version unknown (built from source)"
+- ❌ No auto-update capabilities
+- ✅ Automatic Go module updates
+- 💡 **Tip:** Run `ctx update` after installing to upgrade to a full-featured version
 
-Verify the installation with `ctx version`.
+### Updating ctx
+
+**Automatic Updates (Install Script & Pre-built):**
+```bash
+ctx update                    # Update to latest stable version
+ctx update --pre-release      # Include pre-releases
+ctx update --check            # Check for updates without installing
+```
+
+**Go Install Users:**
+```bash
+go install github.com/slavakurilyak/ctx@latest  # Manual update
+# Or upgrade to full version:
+ctx update  # Replaces go install version with full-featured version
+```
+
+Verify installation: `ctx version`
 
 ## Usage
 
