@@ -149,6 +149,25 @@ ctx update  # Replaces go install version with full-featured version
 
 Verify installation: `ctx version`
 
+### Quick Start: Set Up Your AI Assistant
+
+After installation, configure ctx for your development environment:
+
+```bash
+# For your AI coding assistant:
+ctx setup claude        # Claude Code/Desktop  
+ctx setup cursor        # Cursor IDE
+ctx setup aider         # Aider
+ctx setup windsurf      # Windsurf IDE
+ctx setup jetbrains     # JetBrains AI Assistant
+ctx setup gemini        # Gemini CLI
+
+# See all supported tools:
+ctx setup
+```
+
+This creates configuration files that teach your AI assistant to use ctx automatically, enabling token-efficient workflows.
+
 ## Usage
 
 Simply prefix any command you want to enrich with `ctx`.
