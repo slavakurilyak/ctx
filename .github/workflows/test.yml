@@ -58,10 +58,13 @@ jobs:
             exit 1
           fi
           
-          # Test failed command
-          ./ctx false || true  # Prevent script failure
-          if [ $? -eq 0 ]; then
-            echo "Expected non-zero exit code for failed command"
+          # Test failed command - ctx should exit with non-zero when wrapped command fails
+          set +e  # Temporarily disable exit on error
+          ./ctx false
+          EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "Expected non-zero exit code for failed command, got $EXIT_CODE"
             exit 1
           fi
           echo "Exit code validation passed"
