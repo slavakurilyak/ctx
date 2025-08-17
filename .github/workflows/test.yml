@@ -29,8 +29,8 @@ jobs:
         run: |
           ./ctx echo "test" > output.json
           SCHEMA_VERSION=$(jq -r '.schema_version' output.json)
-          if [ "$SCHEMA_VERSION" != "1.0" ]; then
-            echo "Schema version mismatch! Expected 1.0, got $SCHEMA_VERSION"
+          if [ "$SCHEMA_VERSION" != "0.1" ]; then
+            echo "Schema version mismatch! Expected 0.1, got $SCHEMA_VERSION"
             exit 1
           fi
           echo "Schema validation passed: version $SCHEMA_VERSION"
