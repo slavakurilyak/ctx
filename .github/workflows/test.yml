@@ -1,0 +1,76 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Run tests
+        run: go test -v ./...
+
+      - name: Build
+        run: go build -o ctx .
+
+      - name: Validate Output Schema
+        run: |
+          ./ctx echo "test" > output.json
+          SCHEMA_VERSION=$(jq -r '.schema_version' output.json)
+          if [ "$SCHEMA_VERSION" != "1.0" ]; then
+            echo "Schema version mismatch! Expected 1.0, got $SCHEMA_VERSION"
+            exit 1
+          fi
+          echo "Schema validation passed: version $SCHEMA_VERSION"
+
+      - name: Test Streaming Output
+        run: |
+          ./ctx --stream 'echo hello; sleep 0.1; echo world >&2' > stream_output.txt
+          # Check that we have streaming events and a final result
+          if ! grep -q '"type":"stdout"' stream_output.txt; then
+            echo "Missing stdout event in streaming output"
+            exit 1
+          fi
+          if ! grep -q '"type":"result"' stream_output.txt; then
+            echo "Missing result event in streaming output"
+            exit 1
+          fi
+          echo "Streaming validation passed"
+
+      - name: Test Exit Codes
+        run: |
+          # Test successful command
+          ./ctx echo "success"
+          if [ $? -ne 0 ]; then
+            echo "Expected exit code 0 for successful command"
+            exit 1
+          fi
+          
+          # Test failed command
+          ./ctx false || true  # Prevent script failure
+          if [ $? -eq 0 ]; then
+            echo "Expected non-zero exit code for failed command"
+            exit 1
+          fi
+          echo "Exit code validation passed"
+
+      - name: Test Telemetry Command
+        run: |
+          ./ctx telemetry status
+          if [ $? -ne 0 ]; then
+            echo "Telemetry status command failed"
+            exit 1
+          fi
+          echo "Telemetry command validation passed"
