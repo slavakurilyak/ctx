@@ -132,6 +132,15 @@ func (ce *CommandExecutor) executeSingleCommand(ctx context.Context, args []stri
 		defer cancel()
 	}
 
+	// Check if any limits are configured that require streaming execution
+	needsStreaming := (ce.appCtx.Config.Limits.MaxLines != nil && *ce.appCtx.Config.Limits.MaxLines > 0) ||
+		(ce.appCtx.Config.Limits.MaxOutputBytes != nil && *ce.appCtx.Config.Limits.MaxOutputBytes > 0)
+
+	if needsStreaming {
+		// Use streaming execution for limit enforcement
+		return ce.executeSingleCommandWithStreaming(ctx, args)
+	}
+
 	result, err := executor.ExecuteCommand(ctx, command)
 	if err != nil {
 		output := models.NewOutput(command, []byte(err.Error()), 1, 0)
@@ -139,6 +148,125 @@ func (ce *CommandExecutor) executeSingleCommand(ctx context.Context, args []stri
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
 
+	output, err := ce.enricher.EnrichOutput(ctx, result)
+	if err != nil {
+		return fmt.Errorf("failed to enrich output: %w", err)
+	}
+
+	// Post-execution token check
+	if ce.appCtx.Config.MaxTokens > 0 && int64(output.Tokens) > ce.appCtx.Config.MaxTokens {
+		limitErr := &TokenLimitExceededError{
+			Limit:  ce.appCtx.Config.MaxTokens,
+			Actual: output.Tokens,
+		}
+		output.Metadata.Error = limitErr.Error()
+		output.Metadata.Success = false
+		output.Metadata.FailureReason = "token_limit_exceeded"
+		_ = ce.outputResult(output)
+		return &ExitError{Code: ExitCodeWrappedCmdError}
+	}
+
+	err = ce.outputResult(output)
+	if err != nil {
+		return err
+	}
+
+	// If the command ran but failed, return the exit code
+	if result.ExitCode != 0 {
+		return &ExitError{Code: ExitCodeWrappedCmdError}
+	}
+
+	return nil
+}
+
+// executeSingleCommandWithStreaming executes a single command with streaming to enforce limits,
+// but outputs in the same format as regular execution (non-streaming JSON)
+func (ce *CommandExecutor) executeSingleCommandWithStreaming(ctx context.Context, args []string) error {
+	command := strings.Join(args, " ")
+
+	// Create a buffer to collect all output lines
+	var outputLines []string
+	
+	// Create streaming callback function that collects output
+	lineCb := func(line string, streamType string) {
+		outputLines = append(outputLines, line)
+	}
+
+	// Get tokenizer for limit checking
+	tok, _ := ce.appCtx.GetTokenizer()
+
+	// Get limits from config
+	var maxBytes, maxLines, maxTokens int64
+	if ce.appCtx.Config.Limits.MaxOutputBytes != nil {
+		maxBytes = *ce.appCtx.Config.Limits.MaxOutputBytes
+	}
+	if ce.appCtx.Config.Limits.MaxLines != nil {
+		maxLines = *ce.appCtx.Config.Limits.MaxLines
+	}
+	if ce.appCtx.Config.Limits.MaxTokens != nil {
+		maxTokens = *ce.appCtx.Config.Limits.MaxTokens
+	}
+
+	result, err := executor.ExecuteCommandStreaming(ctx, command, lineCb, tok, maxBytes, maxLines, maxTokens)
+	if err != nil {
+		// Handle limit exceeded errors by creating a proper output with error info
+		output := models.NewOutput(command, result.Output, result.ExitCode, result.Duration)
+		output.Metadata.Error = err.Error()
+		output.Metadata.Success = false
+
+		// Set failure reason and limit info based on error type
+		switch err {
+		case executor.ErrLineLimitExceeded:
+			output.Metadata.FailureReason = "line_limit_exceeded"
+			output.Metadata.Limits = &models.LimitInfo{
+				MaxLines:     &maxLines,
+				ActualLines:  len(strings.Split(strings.TrimSpace(string(result.Output)), "\n")),
+				LimitReached: "lines",
+			}
+		case executor.ErrOutputLimitExceeded:
+			output.Metadata.FailureReason = "output_limit_exceeded"
+			output.Metadata.Limits = &models.LimitInfo{
+				MaxOutputBytes: &maxBytes,
+				LimitReached:   "bytes",
+			}
+		case executor.ErrTokenLimitExceeded:
+			output.Metadata.FailureReason = "token_limit_exceeded"
+			output.Metadata.Limits = &models.LimitInfo{
+				MaxTokens:    &maxTokens,
+				LimitReached: "tokens",
+			}
+		}
+
+		// Always add configured limits info for context
+		if output.Metadata.Limits == nil {
+			output.Metadata.Limits = &models.LimitInfo{}
+		}
+		if maxLines > 0 && output.Metadata.Limits.MaxLines == nil {
+			output.Metadata.Limits.MaxLines = &maxLines
+		}
+		if maxBytes > 0 && output.Metadata.Limits.MaxOutputBytes == nil {
+			output.Metadata.Limits.MaxOutputBytes = &maxBytes
+		}
+		if maxTokens > 0 && output.Metadata.Limits.MaxTokens == nil {
+			output.Metadata.Limits.MaxTokens = &maxTokens
+		}
+
+		// Enrich the output with tokens, context, etc.
+		enrichedOutput, enrichErr := ce.enricher.EnrichOutput(ctx, result)
+		if enrichErr == nil {
+			// Use enriched metadata but keep our error info and limits
+			enrichedOutput.Metadata.Error = output.Metadata.Error
+			enrichedOutput.Metadata.Success = output.Metadata.Success
+			enrichedOutput.Metadata.FailureReason = output.Metadata.FailureReason
+			enrichedOutput.Metadata.Limits = output.Metadata.Limits
+			output = enrichedOutput
+		}
+
+		ce.outputResult(output)
+		return &ExitError{Code: ExitCodeWrappedCmdError}
+	}
+
+	// Enrich the final output
 	output, err := ce.enricher.EnrichOutput(ctx, result)
 	if err != nil {
 		return fmt.Errorf("failed to enrich output: %w", err)

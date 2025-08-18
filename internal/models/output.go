@@ -41,6 +41,18 @@ type MetadataSection struct {
 	User      string `json:"user"`       // Username
 	Host      string `json:"host"`       // Hostname
 	SessionID string `json:"session_id"` // Unique session identifier
+
+	// Limit information (only populated when limits are applied)
+	Limits *LimitInfo `json:"limits,omitempty"` // Information about applied limits
+}
+
+// LimitInfo contains information about applied limits
+type LimitInfo struct {
+	MaxLines       *int64 `json:"max_lines,omitempty"`        // Line limit that was applied
+	MaxOutputBytes *int64 `json:"max_output_bytes,omitempty"` // Byte limit that was applied  
+	MaxTokens      *int64 `json:"max_tokens,omitempty"`       // Token limit that was applied
+	ActualLines    int    `json:"actual_lines,omitempty"`     // Number of lines that were output
+	LimitReached   string `json:"limit_reached,omitempty"`    // Which limit was reached (if any)
 }
 
 // TelemetrySection contains optional OpenTelemetry trace information
