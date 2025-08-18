@@ -29,6 +29,7 @@ type ExecutionResult struct {
 	ExitCode int
 	Duration time.Duration
 	Command  string
+	Metadata map[string]interface{}
 }
 
 func ExecuteCommand(ctx context.Context, command string) (*ExecutionResult, error) {
@@ -54,6 +55,12 @@ func ExecuteCommand(ctx context.Context, command string) (*ExecutionResult, erro
 		cmd = exec.CommandContext(ctx, parts[0], parts[1:]...)
 	}
 	
+	// Setup process group for proper cleanup (platform-specific)
+	setupProcessGroup(cmd)
+	
+	// Configure termination behavior (platform-specific)
+	configureTermination(cmd)
+	
 	// Capture both stdout and stderr
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -67,8 +74,27 @@ func ExecuteCommand(ctx context.Context, command string) (*ExecutionResult, erro
 		cmd.Dir = wd
 	}
 	
-	// Execute the command
-	err := cmd.Run()
+	// Start the command (non-blocking)
+	err := cmd.Start()
+	if err != nil {
+		return nil, err
+	}
+	
+	// On Windows, associate the process with the Job Object
+	// On Unix, this is a no-op since process groups are set before starting
+	if err := associateProcessWithJobObject(cmd); err != nil {
+		// Log the error but continue - process will still run, just without job object protection
+		// In production, you might want to handle this differently
+		_ = err
+	}
+	
+	// Wait for the command to complete
+	err = cmd.Wait()
+	
+	// If context was cancelled, ensure process group is killed
+	if ctx.Err() == context.DeadlineExceeded || ctx.Err() == context.Canceled {
+		_ = killProcessGroup(cmd) // Ensure complete cleanup
+	}
 	
 	duration := time.Since(start)
 	
@@ -91,12 +117,22 @@ func ExecuteCommand(ctx context.Context, command string) (*ExecutionResult, erro
 		output = append(output, stderr.Bytes()...)
 	}
 	
-	return &ExecutionResult{
+	result := &ExecutionResult{
 		Output:   output,
 		ExitCode: exitCode,
 		Duration: duration,
 		Command:  command,
-	}, nil
+		Metadata: make(map[string]interface{}),
+	}
+	
+	// Add termination reason to metadata
+	if ctx.Err() == context.DeadlineExceeded {
+		result.Metadata["termination_reason"] = "timeout"
+	} else if ctx.Err() == context.Canceled {
+		result.Metadata["termination_reason"] = "cancelled"
+	}
+	
+	return result, nil
 }
 
 func splitCommand(command string) []string {
@@ -187,6 +223,12 @@ func ExecuteCommandStreaming(
 		cmd = exec.CommandContext(cmdCtx, parts[0], parts[1:]...)
 	}
 	
+	// Setup process group for proper cleanup (platform-specific)
+	setupProcessGroup(cmd)
+	
+	// Configure termination behavior (platform-specific)
+	configureTermination(cmd)
+	
 	// Set up pipes for streaming
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
@@ -238,12 +280,24 @@ func ExecuteCommandStreaming(
 	if err := cmd.Start(); err != nil {
 		return nil, fmt.Errorf("failed to start command: %w", err)
 	}
+	
+	// On Windows, associate the process with the Job Object
+	// On Unix, this is a no-op since process groups are set before starting
+	if err := associateProcessWithJobObject(cmd); err != nil {
+		// Log the error but continue - process will still run, just without job object protection
+		_ = err
+	}
 
 	// Wait for pipes to be fully read
 	wg.Wait()
 	
 	// Wait for command to complete
 	err = cmd.Wait()
+
+	// If context was cancelled, ensure process group is killed
+	if cmdCtx.Err() == context.DeadlineExceeded || cmdCtx.Err() == context.Canceled {
+		_ = killProcessGroup(cmd) // Ensure complete cleanup
+	}
 
 	duration := time.Since(start)
 	
@@ -276,6 +330,14 @@ func ExecuteCommandStreaming(
 		ExitCode: exitCode,
 		Duration: duration,
 		Command:  command,
+		Metadata: make(map[string]interface{}),
+	}
+	
+	// Add termination reason to metadata
+	if cmdCtx.Err() == context.DeadlineExceeded {
+		result.Metadata["termination_reason"] = "timeout"
+	} else if cmdCtx.Err() == context.Canceled {
+		result.Metadata["termination_reason"] = "cancelled"
 	}
 	
 	// Return the limit error if one occurred

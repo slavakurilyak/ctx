@@ -233,8 +233,30 @@ Pro features will activate with `ctx login`. [**Learn More About Pro Pricing**](
 | `--no-history` | `CTX_NO_HISTORY` | Disable history recording | `false` |
 | `--no-telemetry` | `CTX_NO_TELEMETRY` | Disable OpenTelemetry tracing | `false` |
 | `--timeout` | `CTX_TIMEOUT` | Set command timeout (e.g., `30s`, `1m`) | `2m` |
+| - | `CTX_WAIT_DELAY` | Time to wait after SIGTERM before SIGKILL (e.g., `5s`) | `3s` |
+| - | `CTX_SIGTERM_GRACE` | Grace period after SIGTERM for cleanup (e.g., `500ms`) | `100ms` |
 | `--stream` | - | Stream output line by line for long-running commands | `false` |
 | - | `CTX_API_ENDPOINT` | API endpoint for ctx Pro features (set in .env) | Coming soon |
+
+## Timeout Behavior
+
+`ctx` properly terminates entire process trees when timeouts occur, including all child processes spawned by build tools, language runtimes, and shell scripts.
+
+### Examples
+
+```bash
+# Terminates after 2 seconds (including child processes)
+ctx --timeout 2s -- go run main.go      # Go compilation + execution
+ctx --timeout 2s -- cargo run           # Rust build + run
+ctx --timeout 2s -- npm run dev         # Node.js dev server
+ctx --timeout 2s -- bash script.sh      # Shell script + subprocesses
+
+# Default timeout is 2 minutes
+ctx -- docker build .
+
+# Custom grace period for cleanup
+CTX_WAIT_DELAY=5s ctx --timeout 10s -- docker-compose up
+```
 
 ## Resources & Contributing
 
