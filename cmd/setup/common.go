@@ -3,27 +3,24 @@ package setup
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
-// CleanHelpOutput removes ANSI escape codes
+// CleanHelpOutput removes ANSI escape codes and trailing whitespace
 func CleanHelpOutput(input string) string {
-	// Remove ANSI escape codes
-	output := strings.ReplaceAll(input, "\x1b[0m", "")
-	output = strings.ReplaceAll(output, "\x1b[31m", "")
-	output = strings.ReplaceAll(output, "\x1b[32m", "")
-	output = strings.ReplaceAll(output, "\x1b[33m", "")
-	output = strings.ReplaceAll(output, "\x1b[34m", "")
-	output = strings.ReplaceAll(output, "\x1b[35m", "")
-	output = strings.ReplaceAll(output, "\x1b[36m", "")
-	output = strings.ReplaceAll(output, "\x1b[37m", "")
-	output = strings.ReplaceAll(output, "\x1b[90m", "")
-	output = strings.ReplaceAll(output, "\x1b[1m", "")
-	output = strings.ReplaceAll(output, "\x1b[2m", "")
-	output = strings.ReplaceAll(output, "\x1b[3m", "")
-	output = strings.ReplaceAll(output, "\x1b[4m", "")
+	// Remove all ANSI escape sequences with regex
+	re := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	output := re.ReplaceAllString(input, "")
 
-	return output
+	// Split into lines and remove trailing whitespace (preserve intentional indentation)
+	lines := strings.Split(output, "\n")
+	for i, line := range lines {
+		// Remove trailing regular spaces and tabs only
+		lines[i] = strings.TrimRight(line, " \t")
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 // GetCtxHelp gets the ctx help output and cleans it
