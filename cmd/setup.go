@@ -11,7 +11,7 @@ import (
 // NewSetupCmd creates the setup command
 func NewSetupCmd() *cobra.Command {
 	var force bool
-	
+
 	setupCmd := &cobra.Command{
 		Use:   "setup [tool]",
 		Short: "Set up coding agents and assistants with ctx documentation",
@@ -38,7 +38,7 @@ When no tool is specified:
 			return cmd.Help()
 		},
 	}
-	
+
 	setupCmd.Flags().BoolVar(&force, "force", false, "Overwrite existing files")
 	setupCmd.Flags().Bool("non-interactive", false, "Run in non-interactive mode (defaults to Claude Code)")
 
@@ -55,6 +55,7 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewGeminiCmd())
 	setupCmd.AddCommand(setup.NewClineCmd())
 	setupCmd.AddCommand(setup.NewGooseCmd())
+	setupCmd.AddCommand(setup.NewTraeCmd())
 
 	return setupCmd
 }
@@ -105,10 +106,11 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
 	fmt.Println("  ctx setup goose         # Goose AI Agent")
+	fmt.Println("  ctx setup trae          # Trae IDE")
 	fmt.Println()
 	fmt.Println("Choose the tool you're using, then run the specific command.")
 	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")
 	fmt.Println()
-	
+
 	return nil
 }

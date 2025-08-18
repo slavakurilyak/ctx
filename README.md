@@ -48,7 +48,7 @@ Modern AI agents struggle with external tools because raw command output is toke
 | **Opencode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✗ |
 | **Augment Code** | [Official site](https://www.augmentcode.com/) \| [Docs](https://www.augmentcode.com/docs/getting-started) | ✗ |
 | **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ |
-| **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✗ |
+| **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✓ (via `ctx setup trae`) |
 | **Zencoder** | [Official site](https://www.zencoder.dev/) \| [GitHub](https://github.com/zencoder-platform/zencoder) | ✗ |
 | **Qodo Gen** | [Official site](https://qodo.ai/) \| [Docs](https://docs.qodo.ai/) | ✗ |
 | **Warp Terminal** | [Official site](https://www.warp.dev/) \| [Docs](https://docs.warp.dev/) | ✗ |
@@ -163,6 +163,7 @@ ctx setup windsurf      # Windsurf IDE
 ctx setup jetbrains     # JetBrains AI Assistant
 ctx setup gemini        # Gemini CLI
 ctx setup goose         # Goose AI Agent
+ctx setup trae          # Trae IDE
 
 # See all supported tools:
 ctx setup
@@ -204,6 +205,7 @@ ctx setup windsurf  # Windsurf IDE
 ctx setup goose     # Goose AI Agent
 ctx setup jetbrains # JetBrains AI Assistant
 ctx setup gemini    # Gemini CLI
+ctx setup trae      # Trae IDE
 ```
 These commands create local configuration files that instruct your IDE's AI to wrap shell commands with `ctx`, promoting token-efficient workflows.
 
