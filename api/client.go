@@ -22,7 +22,7 @@ type Client struct {
 func NewClient(baseURL, apiKey string) *Client {
 	// baseURL must be provided via environment or config
 	// No hardcoded default
-	
+
 	return &Client{
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
@@ -80,7 +80,7 @@ func (c *Client) GetWebhookStats(ctx context.Context) (*WebhookStats, error) {
 // newRequest creates a new HTTP request
 func (c *Client) newRequest(ctx context.Context, method, path string, body interface{}) (*http.Request, error) {
 	url := c.baseURL + path
-	
+
 	var buf bytes.Buffer
 	if body != nil {
 		if err := json.NewEncoder(&buf).Encode(body); err != nil {

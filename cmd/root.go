@@ -46,7 +46,7 @@ func NewRootCmdWithDI() *cobra.Command {
 		"    " + StyledCommand("ctx psql -c \"SELECT COUNT(*) FROM events\" | jq '.tokens'") + "  " + StyledDescription("# Probe size") + "\n" +
 		"    " + StyledCommand("ctx --max-tokens 5000 psql -c \"SELECT id FROM events WHERE status='error'\"") + "  " + StyledDescription("# Filter & act") + "\n\n" +
 		StyledHeader("FILTER TYPES:") + "\n\n" +
-        "    • " + StyledDescription("ctx filters (safety): --max-tokens, --max-lines, --max-output-bytes, --timeout") + "\n" +
+		"    • " + StyledDescription("ctx filters (safety): --max-tokens, --max-lines, --max-output-bytes, --timeout") + "\n" +
 		"    • " + StyledDescription("Command filters (efficiency): LIMIT, WHERE, --tail, --since, head, grep") + "\n" +
 		"    • " + StyledDescription("Best: ctx --max-tokens 1000 psql -c \"SELECT id FROM users LIMIT 100\"") + "\n\n" +
 		StyledSeparator("════════════════════════════════════════════════════════════════════════════════")
@@ -54,9 +54,9 @@ func NewRootCmdWithDI() *cobra.Command {
 	longDescription := helpText
 
 	var rootCmd = &cobra.Command{
-		Use:   "ctx [flags] <command> [args...]",
-		Short: "A universal CLI context engine for AI agents.",
-		Long:  longDescription,
+		Use:           "ctx [flags] <command> [args...]",
+		Short:         "A universal CLI context engine for AI agents.",
+		Long:          longDescription,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Args:          cobra.ArbitraryArgs,
@@ -133,13 +133,13 @@ func NewRootCmdWithDI() *cobra.Command {
 			}
 
 			executor := NewCommandExecutor(appCtx)
-			
+
 			// Check if streaming is enabled
 			isStream, _ := cmd.Flags().GetBool("stream")
 			if isStream {
 				return executor.ExecuteStreamCommand(cmd.Context(), args)
 			}
-			
+
 			// Separate ctx flags from the command to be executed.
 			// Cobra does this automatically; `args` contains only non-flag arguments.
 			return executor.ExecuteCommand(cmd.Context(), args)
@@ -167,16 +167,16 @@ func NewRootCmdWithDI() *cobra.Command {
 
 	// Add telemetry subcommand
 	rootCmd.AddCommand(NewTelemetryCmd())
-	
+
 	// Add config subcommand
 	rootCmd.AddCommand(NewConfigCmd())
-	
+
 	// Add version subcommand
 	rootCmd.AddCommand(NewVersionCmd())
-	
+
 	// Add run subcommand for explicit command execution
 	rootCmd.AddCommand(NewRunCmd())
-	
+
 	// Add setup subcommand for setting up coding agents
 	rootCmd.AddCommand(NewSetupCmd())
 
@@ -184,7 +184,7 @@ func NewRootCmdWithDI() *cobra.Command {
 	rootCmd.AddCommand(NewLoginCmd())
 	rootCmd.AddCommand(NewLogoutCmd())
 	rootCmd.AddCommand(NewAccountCmd())
-	
+
 	// Add update command
 	rootCmd.AddCommand(NewUpdateCmd())
 
@@ -205,36 +205,36 @@ func checkForUpdatesIfNeeded(cfg *config.Config) {
 	if cfg.Installation == nil || !cfg.Installation.AutoUpdateCheck {
 		return
 	}
-	
+
 	// Skip if go-install method (can't auto-update)
 	if cfg.Installation.Method == "go-install" {
 		return
 	}
-	
+
 	// Skip if we've checked recently
 	if time.Since(cfg.Installation.LastUpdateCheck) < cfg.Installation.UpdateCheckInterval {
 		return
 	}
-	
+
 	// Skip if version is unknown/dev (can't compare)
 	if version.Version == "dev" || version.Version == "" || strings.Contains(version.GetVersion(), "built from source") {
 		return
 	}
-	
+
 	// Perform the update check (with timeout)
 	upd := updater.NewUpdater("slavakurilyak", "ctx")
 	upd.HTTPClient.Timeout = 5 * time.Second // Quick check
-	
+
 	updateInfo, err := upd.CheckForUpdate(version.GetVersion(), false)
 	if err != nil {
 		// Silently fail - this is non-critical background check
 		return
 	}
-	
+
 	// Update last check time
 	cfg.Installation.LastUpdateCheck = time.Now()
 	cfg.SaveConfig() // Best effort - ignore errors
-	
+
 	// Show update notification if available
 	if updateInfo.UpdateNeeded {
 		fmt.Fprintf(os.Stderr, "\nUpdate available: %s → %s\n", updateInfo.CurrentVersion, updateInfo.LatestVersion)

@@ -42,7 +42,7 @@ This command will:
 func runAccount(cmd *cobra.Command, args []string) error {
 	// Load config from file and environment
 	cfg := config.NewFromFlagsAndEnv(cmd)
-	
+
 	// Check authentication status
 	authManager := auth.NewManager(cfg)
 	if !authManager.IsAuthenticated() {
@@ -83,14 +83,13 @@ func runAccount(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-
 	return nil
 }
 
 func runLogout(cmd *cobra.Command, args []string) error {
 	// Load config from file and environment
 	cfg := config.NewFromFlagsAndEnv(cmd)
-	
+
 	// Check if logged in
 	authManager := auth.NewManager(cfg)
 	if !authManager.IsAuthenticated() {

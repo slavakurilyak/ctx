@@ -22,7 +22,7 @@ func CleanHelpOutput(input string) string {
 	output = strings.ReplaceAll(output, "\x1b[2m", "")
 	output = strings.ReplaceAll(output, "\x1b[3m", "")
 	output = strings.ReplaceAll(output, "\x1b[4m", "")
-	
+
 	return output
 }
 
@@ -38,6 +38,6 @@ func GetCtxHelp() (string, error) {
 	// Clean up the output
 	content := strings.TrimSpace(string(output))
 	content = CleanHelpOutput(content)
-	
+
 	return content, nil
 }

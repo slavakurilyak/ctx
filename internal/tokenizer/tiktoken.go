@@ -16,12 +16,12 @@ type TiktokenTokenizer struct {
 // NewTiktokenTokenizer creates a new tokenizer for OpenAI and Anthropic providers
 func NewTiktokenTokenizer(provider string) (*TiktokenTokenizer, error) {
 	encoding := getEncodingForProvider(provider)
-	
+
 	enc, err := tiktoken.GetEncoding(encoding)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create tiktoken tokenizer for provider %s: %w", provider, err)
 	}
-	
+
 	return &TiktokenTokenizer{
 		encoding: enc,
 		provider: provider,
@@ -42,7 +42,7 @@ func (t *TiktokenTokenizer) GetModelName() string {
 // getEncodingForProvider determines the appropriate encoding for a given provider
 func getEncodingForProvider(provider string) string {
 	providerLower := strings.ToLower(provider)
-	
+
 	switch providerLower {
 	case "anthropic", "openai":
 		// Both Anthropic and OpenAI use cl100k_base encoding

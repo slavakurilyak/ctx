@@ -23,7 +23,7 @@ func newTelemetryStatusCmd() *cobra.Command {
 		Short: "Show the current telemetry status",
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg := config.NewFromFlagsAndEnv(cmd.Root())
-			
+
 			status := "Enabled"
 			if cfg.NoTelemetry {
 				status = "Disabled"

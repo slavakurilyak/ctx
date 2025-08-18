@@ -71,14 +71,14 @@ The output shows the final configuration and the source of each setting.`,
 
 // ConfigOutput represents the configuration with source information
 type ConfigOutput struct {
-	TokenModel        ConfigValue   `json:"token_model" yaml:"token_model"`
-	DefaultTimeout    ConfigValue   `json:"default_timeout" yaml:"default_timeout"`
-	OutputFormat      ConfigValue   `json:"output_format" yaml:"output_format"`
-	CacheDir          ConfigValue   `json:"cache_dir" yaml:"cache_dir"`
-	NoTokens          ConfigValue   `json:"no_tokens" yaml:"no_tokens"`
-	NoHistory         ConfigValue   `json:"no_history" yaml:"no_history"`
-	NoTelemetry       ConfigValue   `json:"no_telemetry" yaml:"no_telemetry"`
-	Limits            LimitsOutput  `json:"limits" yaml:"limits"`
+	TokenModel     ConfigValue  `json:"token_model" yaml:"token_model"`
+	DefaultTimeout ConfigValue  `json:"default_timeout" yaml:"default_timeout"`
+	OutputFormat   ConfigValue  `json:"output_format" yaml:"output_format"`
+	CacheDir       ConfigValue  `json:"cache_dir" yaml:"cache_dir"`
+	NoTokens       ConfigValue  `json:"no_tokens" yaml:"no_tokens"`
+	NoHistory      ConfigValue  `json:"no_history" yaml:"no_history"`
+	NoTelemetry    ConfigValue  `json:"no_telemetry" yaml:"no_telemetry"`
+	Limits         LimitsOutput `json:"limits" yaml:"limits"`
 }
 
 // LimitsOutput represents the limits configuration with source information
@@ -164,14 +164,14 @@ func buildConfigOutput(cfg *config.Config) ConfigOutput {
 func getSource(cfg *config.Config, field string) string {
 	// Check if environment variable is set
 	envVars := map[string]string{
-		"TokenModel":            "CTX_TOKEN_MODEL",
-		"DefaultTimeout":        "CTX_TIMEOUT",
-		"OutputFormat":          "CTX_OUTPUT_FORMAT",
-		"NoTokens":              "CTX_NO_TOKENS",
-		"NoHistory":             "CTX_NO_HISTORY",
-		"Limits.MaxTokens":      "CTX_MAX_TOKENS",
-		"Limits.MaxOutputBytes": "CTX_MAX_OUTPUT_BYTES",
-		"Limits.MaxLines":       "CTX_MAX_LINES",
+		"TokenModel":               "CTX_TOKEN_MODEL",
+		"DefaultTimeout":           "CTX_TIMEOUT",
+		"OutputFormat":             "CTX_OUTPUT_FORMAT",
+		"NoTokens":                 "CTX_NO_TOKENS",
+		"NoHistory":                "CTX_NO_HISTORY",
+		"Limits.MaxTokens":         "CTX_MAX_TOKENS",
+		"Limits.MaxOutputBytes":    "CTX_MAX_OUTPUT_BYTES",
+		"Limits.MaxLines":          "CTX_MAX_LINES",
 		"Limits.MaxPipelineStages": "CTX_MAX_PIPELINE_STAGES",
 	}
 
@@ -184,7 +184,7 @@ func getSource(cfg *config.Config, field string) string {
 	// Check if value is non-zero (likely set from file or flag)
 	v := reflect.ValueOf(cfg).Elem()
 	fieldValue := v.FieldByName(field)
-	
+
 	if field == "NoTelemetry" {
 		return cfg.NoTelemetrySource
 	}
@@ -208,7 +208,7 @@ func printHumanReadable(output ConfigOutput) {
 	fmt.Printf("No Tokens:          %v (source: %s)\n", output.NoTokens.Value, output.NoTokens.Source)
 	fmt.Printf("No History:         %v (source: %s)\n", output.NoHistory.Value, output.NoHistory.Source)
 	fmt.Printf("No Telemetry:       %v (source: %s)\n", output.NoTelemetry.Value, output.NoTelemetry.Source)
-	
+
 	fmt.Println("\nLimits:")
 	fmt.Println("-------")
 	if output.Limits.MaxTokens.Value != nil {
@@ -248,7 +248,7 @@ Valid methods:
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			method := args[0]
-			
+
 			// Validate method
 			validMethods := []string{"install-script", "go-install", "pre-built", "manual"}
 			valid := false
@@ -258,27 +258,27 @@ Valid methods:
 					break
 				}
 			}
-			
+
 			if !valid {
 				return fmt.Errorf("invalid installation method '%s'. Valid methods: %v", method, validMethods)
 			}
-			
+
 			// Get current config and set installation method
 			cfg := config.NewFromFlagsAndEnv(cmd)
 			err := cfg.SetInstallationMethod(method)
 			if err != nil {
 				return fmt.Errorf("failed to save installation method: %w", err)
 			}
-			
+
 			fmt.Printf("Installation method set to: %s\n", method)
-			
+
 			// Show update capability
 			if method == "install-script" || method == "pre-built" || method == "manual" {
 				fmt.Println("Auto-updates enabled. Use 'ctx update' to update to the latest version.")
 			} else {
 				fmt.Println("Manual updates only. Use 'go install github.com/slavakurilyak/ctx@latest' to update.")
 			}
-			
+
 			return nil
 		},
 	}

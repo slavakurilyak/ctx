@@ -21,7 +21,6 @@ type VersionInfo struct {
 	Arch          string `json:"arch"`
 }
 
-
 // NewVersionCmd creates the version subcommand
 func NewVersionCmd() *cobra.Command {
 	var jsonOutput bool
@@ -57,7 +56,7 @@ func NewVersionCmd() *cobra.Command {
 				fmt.Printf("  Build Date:       %s\n", info.BuildDate)
 				fmt.Printf("  Go Version:       %s\n", info.GoVersion)
 				fmt.Printf("  Platform:         %s/%s\n", info.OS, info.Arch)
-				
+
 				// Add update suggestion for go install users
 				if version.Version == "dev" {
 					fmt.Printf("\nTip:\n")
@@ -65,7 +64,7 @@ func NewVersionCmd() *cobra.Command {
 					fmt.Printf("  For proper versioning and auto-updates, use: ctx update\n")
 					fmt.Printf("  Or reinstall with: curl -sSL https://raw.githubusercontent.com/slavakurilyak/ctx/main/scripts/install-remote.sh | bash\n")
 				}
-				
+
 				// Add compatibility note
 				fmt.Printf("\nCompatibility:\n")
 				fmt.Printf("  This version outputs JSON with schema version %s\n", info.SchemaVersion)

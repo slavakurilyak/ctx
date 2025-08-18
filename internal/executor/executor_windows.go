@@ -15,7 +15,7 @@ import (
 
 var (
 	kernel32 = syscall.NewLazyDLL("kernel32.dll")
-	
+
 	procCreateJobObjectW         = kernel32.NewProc("CreateJobObjectW")
 	procAssignProcessToJobObject = kernel32.NewProc("AssignProcessToJobObject")
 	procSetInformationJobObject  = kernel32.NewProc("SetInformationJobObject")
@@ -26,7 +26,7 @@ var (
 const (
 	// Job Object limit flags
 	JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
-	
+
 	// Job Object information classes
 	JobObjectExtendedLimitInformation = 9
 )
@@ -76,7 +76,7 @@ func setupProcessGroup(cmd *exec.Cmd) {
 	if cmd.SysProcAttr == nil {
 		cmd.SysProcAttr = &syscall.SysProcAttr{}
 	}
-	
+
 	// Create a new Job Object for this command
 	job, err := createJobObject()
 	if err != nil {
@@ -84,12 +84,12 @@ func setupProcessGroup(cmd *exec.Cmd) {
 		// This might happen on older Windows versions or restricted environments
 		return
 	}
-	
+
 	// Store the job handle associated with this command
 	jobObjectMux.Lock()
 	jobObjectMap[cmd] = job
 	jobObjectMux.Unlock()
-	
+
 	// Set CREATE_NEW_PROCESS_GROUP flag to allow Ctrl+C handling
 	cmd.SysProcAttr.CreationFlags = syscall.CREATE_NEW_PROCESS_GROUP
 }
@@ -101,32 +101,32 @@ func createJobObject() (syscall.Handle, error) {
 		0, // lpJobAttributes (NULL for default security)
 		0, // lpName (NULL for unnamed object)
 	)
-	
+
 	if ret == 0 {
 		return 0, fmt.Errorf("CreateJobObject failed: %v", err)
 	}
-	
+
 	job := syscall.Handle(ret)
-	
+
 	// Configure the job object to terminate all processes when the job handle is closed
 	limitInfo := JOBOBJECT_EXTENDED_LIMIT_INFORMATION{
 		BasicLimitInformation: JOBOBJECT_BASIC_LIMIT_INFORMATION{
 			LimitFlags: JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
 		},
 	}
-	
+
 	ret, _, err = procSetInformationJobObject.Call(
 		uintptr(job),
 		uintptr(JobObjectExtendedLimitInformation),
 		uintptr(unsafe.Pointer(&limitInfo)),
 		unsafe.Sizeof(limitInfo),
 	)
-	
+
 	if ret == 0 {
 		procCloseHandle.Call(uintptr(job))
 		return 0, fmt.Errorf("SetInformationJobObject failed: %v", err)
 	}
-	
+
 	return job, nil
 }
 
@@ -136,11 +136,11 @@ func associateProcessWithJob(job syscall.Handle, processHandle syscall.Handle) e
 		uintptr(job),
 		uintptr(processHandle),
 	)
-	
+
 	if ret == 0 {
 		return fmt.Errorf("AssignProcessToJobObject failed: %v", err)
 	}
-	
+
 	return nil
 }
 
@@ -149,14 +149,14 @@ func killProcessGroup(cmd *exec.Cmd) error {
 	jobObjectMux.Lock()
 	job, exists := jobObjectMap[cmd]
 	jobObjectMux.Unlock()
-	
+
 	if exists && job != 0 {
 		// Terminate all processes in the job object
 		ret, _, err := procTerminateJobObject.Call(
 			uintptr(job),
 			1, // Exit code
 		)
-		
+
 		if ret == 0 {
 			// If termination fails, try to kill the process directly as fallback
 			if cmd.Process != nil {
@@ -164,23 +164,23 @@ func killProcessGroup(cmd *exec.Cmd) error {
 			}
 			// Don't return error, just continue to cleanup
 		}
-		
+
 		// Close the job object handle
 		procCloseHandle.Call(uintptr(job))
-		
+
 		// Remove from map
 		jobObjectMux.Lock()
 		delete(jobObjectMap, cmd)
 		jobObjectMux.Unlock()
-		
+
 		return nil
 	}
-	
+
 	// Fallback: kill the process directly if no job object
 	if cmd.Process != nil {
 		return cmd.Process.Kill()
 	}
-	
+
 	return nil
 }
 
@@ -190,7 +190,7 @@ func configureTermination(cmd *exec.Cmd) {
 	cmd.Cancel = func() error {
 		return killProcessGroup(cmd)
 	}
-	
+
 	// Set WaitDelay to give processes time to cleanup
 	// Default to 3 seconds, but allow configuration via environment variable
 	waitDelay := 3 * time.Second
@@ -208,11 +208,11 @@ func AssociateWithJobObject(cmd *exec.Cmd) error {
 	if cmd.Process == nil {
 		return fmt.Errorf("process not started")
 	}
-	
+
 	jobObjectMux.Lock()
 	job, exists := jobObjectMap[cmd]
 	jobObjectMux.Unlock()
-	
+
 	if exists && job != 0 {
 		// Get the process handle
 		// On Windows, cmd.Process.Pid is the process ID, we need to get the handle
@@ -221,9 +221,9 @@ func AssociateWithJobObject(cmd *exec.Cmd) error {
 			return fmt.Errorf("OpenProcess failed: %v", err)
 		}
 		defer syscall.CloseHandle(processHandle)
-		
+
 		return associateProcessWithJob(job, processHandle)
 	}
-	
+
 	return nil
 }

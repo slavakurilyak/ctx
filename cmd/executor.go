@@ -72,10 +72,10 @@ type CommandExecutor struct {
 func NewCommandExecutor(appCtx *app.AppContext) *CommandExecutor {
 	// Get tokenizer
 	tok, _ := appCtx.GetTokenizer() // Ignore error, will work without tokenizer
-	
+
 	// Create enricher with dependencies
 	enr := enricher.NewEnricher(tok, appCtx.History, appCtx.Telemetry, appCtx.Config)
-	
+
 	return &CommandExecutor{
 		enricher: enr,
 		appCtx:   appCtx,
@@ -85,16 +85,16 @@ func NewCommandExecutor(appCtx *app.AppContext) *CommandExecutor {
 // ExecuteCommand executes a command with the given arguments
 func (ce *CommandExecutor) ExecuteCommand(ctx context.Context, args []string) error {
 	isPipeline, stages := ce.parseArguments(args)
-	
+
 	// Check pipeline stage limit if configured
 	if maxStages := ce.appCtx.Config.Limits.MaxPipelineStages; isPipeline && maxStages != nil && len(stages) > *maxStages {
 		return fmt.Errorf("pipeline stage limit exceeded: %d stages found, limit is %d", len(stages), *maxStages)
 	}
-	
+
 	if isPipeline {
 		return ce.executePipeline(ctx, stages)
 	}
-	
+
 	return ce.executeSingleCommand(ctx, args)
 }
 
@@ -102,7 +102,7 @@ func (ce *CommandExecutor) ExecuteCommand(ctx context.Context, args []string) er
 func (ce *CommandExecutor) parseArguments(args []string) (bool, [][]string) {
 	var stages [][]string
 	var currentStage []string
-	
+
 	for _, arg := range args {
 		if arg == "|" {
 			if len(currentStage) > 0 {
@@ -113,37 +113,37 @@ func (ce *CommandExecutor) parseArguments(args []string) (bool, [][]string) {
 			currentStage = append(currentStage, arg)
 		}
 	}
-	
+
 	if len(currentStage) > 0 {
 		stages = append(stages, currentStage)
 	}
-	
+
 	return len(stages) > 1, stages
 }
 
 // executeSingleCommand executes a single command
 func (ce *CommandExecutor) executeSingleCommand(ctx context.Context, args []string) error {
 	command := strings.Join(args, " ")
-	
+
 	// Apply timeout from configuration if set
 	if ce.appCtx.Config.DefaultTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, ce.appCtx.Config.DefaultTimeout)
 		defer cancel()
 	}
-	
+
 	result, err := executor.ExecuteCommand(ctx, command)
 	if err != nil {
 		output := models.NewOutput(command, []byte(err.Error()), 1, 0)
 		ce.outputResult(output) // Still output the JSON
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	output, err := ce.enricher.EnrichOutput(ctx, result)
 	if err != nil {
 		return fmt.Errorf("failed to enrich output: %w", err)
 	}
-	
+
 	// Post-execution token check
 	if ce.appCtx.Config.MaxTokens > 0 && int64(output.Tokens) > ce.appCtx.Config.MaxTokens {
 		limitErr := &TokenLimitExceededError{
@@ -156,43 +156,43 @@ func (ce *CommandExecutor) executeSingleCommand(ctx context.Context, args []stri
 		_ = ce.outputResult(output)
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	err = ce.outputResult(output)
 	if err != nil {
 		return err
 	}
-	
+
 	// If the command ran but failed, return the exit code
 	if result.ExitCode != 0 {
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	return nil
 }
 
 // executePipeline executes a pipeline of commands
 func (ce *CommandExecutor) executePipeline(ctx context.Context, stages [][]string) error {
 	pipelineCmd := ce.buildPipelineCommand(stages)
-	
+
 	// Apply timeout from configuration if set
 	if ce.appCtx.Config.DefaultTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, ce.appCtx.Config.DefaultTimeout)
 		defer cancel()
 	}
-	
+
 	result, err := executor.ExecuteCommand(ctx, pipelineCmd)
 	if err != nil {
 		output := models.NewOutput(pipelineCmd, []byte(err.Error()), 1, 0)
 		ce.outputResult(output) // Still output the JSON
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	output, err := ce.enricher.EnrichOutput(ctx, result)
 	if err != nil {
 		return fmt.Errorf("failed to enrich pipeline output: %w", err)
 	}
-	
+
 	// Post-execution token check for pipeline
 	if ce.appCtx.Config.MaxTokens > 0 && int64(output.Tokens) > ce.appCtx.Config.MaxTokens {
 		limitErr := &TokenLimitExceededError{
@@ -205,17 +205,17 @@ func (ce *CommandExecutor) executePipeline(ctx context.Context, stages [][]strin
 		_ = ce.outputResult(output)
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	err = ce.outputResult(output)
 	if err != nil {
 		return err
 	}
-	
+
 	// If the command ran but failed, return the exit code
 	if result.ExitCode != 0 {
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	return nil
 }
 
@@ -234,13 +234,13 @@ func (ce *CommandExecutor) outputResult(output *models.Output) error {
 	if ce.appCtx.Config.PrettyOutput {
 		return ce.outputPretty(output)
 	}
-	
+
 	// Default: JSON output
 	data, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal output: %w", err)
 	}
-	
+
 	fmt.Println(string(data))
 	return nil
 }
@@ -273,7 +273,7 @@ func countLines(s string) int {
 func getCommandChain(input string) string {
 	// Split by pipe to detect pipeline
 	parts := strings.Split(input, "|")
-	
+
 	if len(parts) == 1 {
 		// Single command - extract executable name
 		fields := strings.Fields(strings.TrimSpace(parts[0]))
@@ -283,7 +283,7 @@ func getCommandChain(input string) string {
 		}
 		return "[empty]"
 	}
-	
+
 	// Pipeline - extract each command's executable
 	var commands []string
 	for _, part := range parts {
@@ -292,7 +292,7 @@ func getCommandChain(input string) string {
 			commands = append(commands, filepath.Base(fields[0]))
 		}
 	}
-	
+
 	// Join with arrow separator
 	if len(commands) > 4 {
 		// Truncate long pipelines
@@ -305,55 +305,55 @@ func getCommandChain(input string) string {
 func (ce *CommandExecutor) outputPretty(output *models.Output) error {
 	// Calculate line count
 	lineCount := countLines(output.Output)
-	
+
 	// Get command chain for display
 	cmdChain := getCommandChain(output.Input)
-	
+
 	// Status line with complete metadata (reordered: tokens, time, lines, size)
 	if output.Metadata.Success {
 		fmt.Printf("ctx → %s | ✓ Success | %d tokens | %d ms | %d lines | %s\n",
 			cmdChain,
-			output.Tokens, 
+			output.Tokens,
 			output.Metadata.Duration,
 			lineCount,
 			formatBytes(output.Metadata.Bytes))
 	} else {
 		fmt.Printf("ctx → %s | ✗ Failed (exit %d) | %d tokens | %d ms | %d lines | %s\n",
 			cmdChain,
-			output.Metadata.ExitCode, 
+			output.Metadata.ExitCode,
 			output.Tokens,
 			output.Metadata.Duration,
 			lineCount,
 			formatBytes(output.Metadata.Bytes))
 	}
-	
+
 	// Separator
 	fmt.Println("────────────────────────────────────────")
-	
+
 	// Output
 	if output.Output != "" {
 		fmt.Println(output.Output)
 	}
-	
+
 	// Error details if present
 	if output.Metadata.Error != "" {
 		fmt.Printf("\nError: %s\n", output.Metadata.Error)
 	}
-	
+
 	return nil
 }
 
 // ExecuteStreamCommand executes a command in streaming mode
 func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []string) error {
 	command := strings.Join(args, " ")
-	
+
 	// Apply timeout from configuration if set
 	if ce.appCtx.Config.DefaultTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, ce.appCtx.Config.DefaultTimeout)
 		defer cancel()
 	}
-	
+
 	// Create streaming callback function
 	lineCb := func(line string, streamType string) {
 		event := models.StreamEvent{
@@ -365,10 +365,10 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 			fmt.Println(string(data))
 		}
 	}
-	
+
 	// Get tokenizer for limit checking
 	tok, _ := ce.appCtx.GetTokenizer()
-	
+
 	// Get limits from config
 	var maxBytes, maxLines, maxTokens int64
 	if ce.appCtx.Config.Limits.MaxOutputBytes != nil {
@@ -380,7 +380,7 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 	if ce.appCtx.Config.Limits.MaxTokens != nil {
 		maxTokens = *ce.appCtx.Config.Limits.MaxTokens
 	}
-	
+
 	result, err := executor.ExecuteCommandStreaming(ctx, command, lineCb, tok, maxBytes, maxLines, maxTokens)
 	if err != nil {
 		// Output error as a stream event
@@ -390,12 +390,12 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 		}
 		data, _ := json.Marshal(errorEvent)
 		fmt.Println(string(data))
-		
+
 		// Output final result envelope with error
 		output := models.NewOutput(command, result.Output, result.ExitCode, result.Duration)
 		output.Metadata.Error = err.Error()
 		output.Metadata.Success = false
-		
+
 		// Set failure reason based on error type
 		switch err {
 		case executor.ErrLineLimitExceeded:
@@ -405,23 +405,23 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 		case executor.ErrTokenLimitExceeded:
 			output.Metadata.FailureReason = "token_limit_exceeded"
 		}
-		
+
 		finalEvent := models.StreamEvent{
 			Type:     "result",
 			Envelope: output,
 		}
 		data, _ = json.Marshal(finalEvent)
 		fmt.Println(string(data))
-		
+
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	// Enrich the final output (note: data.output will be empty for streaming)
 	output, err := ce.enricher.EnrichOutput(ctx, result)
 	if err != nil {
 		return fmt.Errorf("failed to enrich output: %w", err)
 	}
-	
+
 	// Post-execution token check for streaming
 	if ce.appCtx.Config.MaxTokens > 0 && int64(output.Tokens) > ce.appCtx.Config.MaxTokens {
 		limitErr := &TokenLimitExceededError{
@@ -432,10 +432,10 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 		output.Metadata.Success = false
 		output.Metadata.FailureReason = "token_limit_exceeded"
 	}
-	
+
 	// Clear the output since it was already streamed
 	output.Output = ""
-	
+
 	// Output final result envelope
 	finalEvent := models.StreamEvent{
 		Type:     "result",
@@ -446,7 +446,7 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 		return fmt.Errorf("failed to marshal final result: %w", err)
 	}
 	fmt.Println(string(data))
-	
+
 	// Return appropriate exit code
 	if !output.Metadata.Success {
 		// If the command itself failed, prioritize its exit code
@@ -456,10 +456,10 @@ func (ce *CommandExecutor) ExecuteStreamCommand(ctx context.Context, args []stri
 		// Otherwise, it was our token limit check that failed it
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	if result.ExitCode != 0 {
 		return &ExitError{Code: ExitCodeWrappedCmdError}
 	}
-	
+
 	return nil
 }

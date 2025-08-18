@@ -17,7 +17,7 @@ func NewTokenizerCache(factory TokenizerFactory) *TokenizerCache {
 	if factory == nil {
 		factory = &DefaultTokenizerFactory{}
 	}
-	
+
 	return &TokenizerCache{
 		factory: factory,
 		cache:   make(map[string]Tokenizer),
@@ -29,7 +29,7 @@ func (c *TokenizerCache) GetOrCreate(modelName string) (Tokenizer, error) {
 	if modelName == "" {
 		return nil, fmt.Errorf("model name cannot be empty")
 	}
-	
+
 	// Try to get from cache with read lock
 	c.mu.RLock()
 	if tok, exists := c.cache[modelName]; exists {
@@ -37,22 +37,22 @@ func (c *TokenizerCache) GetOrCreate(modelName string) (Tokenizer, error) {
 		return tok, nil
 	}
 	c.mu.RUnlock()
-	
+
 	// Not in cache, acquire write lock to create
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	// Double-check after acquiring write lock
 	if tok, exists := c.cache[modelName]; exists {
 		return tok, nil
 	}
-	
+
 	// Create new tokenizer
 	tok, err := c.factory.CreateTokenizer(modelName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create tokenizer for model %s: %w", modelName, err)
 	}
-	
+
 	// Cache the tokenizer
 	c.cache[modelName] = tok
 	return tok, nil
@@ -62,7 +62,7 @@ func (c *TokenizerCache) GetOrCreate(modelName string) (Tokenizer, error) {
 func (c *TokenizerCache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	// Clear the map
 	for k := range c.cache {
 		delete(c.cache, k)

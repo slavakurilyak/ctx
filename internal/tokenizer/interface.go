@@ -4,7 +4,7 @@ package tokenizer
 type Tokenizer interface {
 	// CountTokens counts the number of tokens in the given text
 	CountTokens(text string) (int, error)
-	
+
 	// GetModelName returns the name of the model this tokenizer is configured for
 	GetModelName() string
 }

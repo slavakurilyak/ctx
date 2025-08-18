@@ -26,21 +26,21 @@ type ErrorResponse struct {
 
 // SubscriptionInfo represents subscription information
 type SubscriptionInfo struct {
-	Tier       string       `json:"tier"`
-	Status     string       `json:"status"`
-	StartedAt  time.Time    `json:"started_at"`
-	ExpiresAt  time.Time    `json:"expires_at"`
-	Features   []string     `json:"features"`
-	Limits     Limits       `json:"limits"`
-	Pricing    *PricingInfo `json:"pricing,omitempty"`
+	Tier      string       `json:"tier"`
+	Status    string       `json:"status"`
+	StartedAt time.Time    `json:"started_at"`
+	ExpiresAt time.Time    `json:"expires_at"`
+	Features  []string     `json:"features"`
+	Limits    Limits       `json:"limits"`
+	Pricing   *PricingInfo `json:"pricing,omitempty"`
 }
 
 // PricingInfo represents pricing information for a subscription
 type PricingInfo struct {
-	Plan         string  `json:"plan"`           // "individual" or "team"
-	Currency     string  `json:"currency"`       // USD, EUR, etc.
-	Amount       float64 `json:"amount"`         // Current price
-	BillingCycle string  `json:"billing_cycle"`  // monthly, annual
+	Plan         string  `json:"plan"`            // "individual" or "team"
+	Currency     string  `json:"currency"`        // USD, EUR, etc.
+	Amount       float64 `json:"amount"`          // Current price
+	BillingCycle string  `json:"billing_cycle"`   // monthly, annual
 	Seats        int     `json:"seats,omitempty"` // Number of seats for team plans
 	NextBilling  string  `json:"next_billing,omitempty"`
 }

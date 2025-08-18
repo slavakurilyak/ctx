@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
-	"strings"
 	"github.com/charmbracelet/lipgloss"
+	"strings"
 )
 
 // EnvVar represents a single environment variable with metadata
@@ -80,15 +80,15 @@ var EnvVars = []EnvVar{
 // Styling for environment section
 var (
 	envHeaderStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF6B35")).
-		Bold(true)
-	
+			Foreground(lipgloss.Color("#FF6B35")).
+			Bold(true)
+
 	envVarStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFA500")).
-		Bold(true)
-	
+			Foreground(lipgloss.Color("#FFA500")).
+			Bold(true)
+
 	envDescStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#555555"))
+			Foreground(lipgloss.Color("#555555"))
 )
 
 // GenerateEnvSection creates the ENVIRONMENT section for help text
@@ -96,7 +96,7 @@ func GenerateEnvSection() string {
 	var sb strings.Builder
 	sb.WriteString(envHeaderStyle.Render("ENVIRONMENT:") + "\n\n")
 	sb.WriteString("  " + envDescStyle.Render("CLI flags take precedence over environment variables.") + "\n\n")
-	
+
 	for _, env := range EnvVars {
 		sb.WriteString(fmt.Sprintf("  %s\n", envVarStyle.Render(env.Name)))
 		sb.WriteString(fmt.Sprintf("    %s", envDescStyle.Render(env.Description)))
@@ -105,7 +105,7 @@ func GenerateEnvSection() string {
 		}
 		sb.WriteString(".\n\n")
 	}
-	
+
 	// Remove the extra newline at the end
 	result := sb.String()
 	return strings.TrimSuffix(result, "\n")

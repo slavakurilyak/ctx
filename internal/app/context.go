@@ -16,16 +16,16 @@ const AppContextKey contextKey = "appContext"
 type AppContext struct {
 	// Tokenizer handles token counting for different LLM models
 	Tokenizer tokenizer.Tokenizer
-	
+
 	// TokenizerCache manages tokenizer instances
 	TokenizerCache *tokenizer.TokenizerCache
-	
+
 	// Telemetry manages OpenTelemetry tracing
 	Telemetry *telemetry.Manager
-	
+
 	// History manages command history
 	History *history.HistoryManager
-	
+
 	// Config holds application configuration
 	Config *config.Config
 }
@@ -38,21 +38,21 @@ func NewAppContext(opts ...Option) *AppContext {
 	ctx := &AppContext{
 		Config: config.Get(),
 	}
-	
+
 	// Apply all options
 	for _, opt := range opts {
 		opt(ctx)
 	}
-	
+
 	// Set defaults if not provided
 	if ctx.History == nil {
 		ctx.History = history.NewHistoryManager()
 	}
-	
+
 	if ctx.TokenizerCache == nil {
 		ctx.TokenizerCache = tokenizer.NewTokenizerCache(nil)
 	}
-	
+
 	return ctx
 }
 
@@ -96,19 +96,19 @@ func (ctx *AppContext) GetTokenizer() (tokenizer.Tokenizer, error) {
 	if ctx.Tokenizer != nil {
 		return ctx.Tokenizer, nil
 	}
-	
+
 	// Get model from config
 	model := ctx.Config.TokenModel
 	if model == "" {
 		model = "claude-4.1-opus" // Default
 	}
-	
+
 	// Get or create from cache
 	tok, err := ctx.TokenizerCache.GetOrCreate(model)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	ctx.Tokenizer = tok
 	return tok, nil
 }

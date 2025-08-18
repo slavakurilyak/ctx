@@ -6,35 +6,35 @@ import "github.com/charmbracelet/lipgloss"
 var (
 	// Header styles for main sections
 	headerStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF6B35")).
-		Bold(true)
+			Foreground(lipgloss.Color("#FF6B35")).
+			Bold(true)
 
 	// Subheader styles for workflow names
 	subHeaderStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#0088CC")).
-		Bold(true)
+			Foreground(lipgloss.Color("#0088CC")).
+			Bold(true)
 
 	// Command/example styles
 	commandStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#0088CC"))
+			Foreground(lipgloss.Color("#0088CC"))
 
 	// Description styles
 	descStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#555555"))
+			Foreground(lipgloss.Color("#555555"))
 
 	// Important text styles
 	importantStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#00AA00")).
-		Bold(true)
+			Foreground(lipgloss.Color("#00AA00")).
+			Bold(true)
 
 	// Separator style
 	separatorStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#444444"))
+			Foreground(lipgloss.Color("#444444"))
 
 	// Environment variable name style
 	envVarStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFA500")).
-		Bold(true)
+			Foreground(lipgloss.Color("#FFA500")).
+			Bold(true)
 )
 
 // StyledHeader returns a styled header string

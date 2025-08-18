@@ -13,9 +13,9 @@ import (
 // NewUpdateCmd creates the update command
 func NewUpdateCmd() *cobra.Command {
 	var (
-		checkOnly      bool
+		checkOnly         bool
 		includePrerelease bool
-		force         bool
+		force             bool
 	)
 
 	cmd := &cobra.Command{
@@ -28,7 +28,7 @@ download and install updates. Use --check to only check for updates without inst
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Create updater instance
 			upd := updater.NewUpdater("slavakurilyak", "ctx")
-			
+
 			// Check for updates
 			fmt.Println("Checking for updates...")
 			updateInfo, err := upd.CheckForUpdate(version.GetVersion(), includePrerelease)
@@ -79,7 +79,7 @@ download and install updates. Use --check to only check for updates without inst
 			}
 
 			fmt.Printf("Successfully updated to %s!\n", updateInfo.LatestVersion)
-			
+
 			// Show release notes if available
 			if updateInfo.ReleaseNotes != "" && updateInfo.UpdateNeeded {
 				fmt.Println("\nRelease Notes:")
@@ -102,16 +102,16 @@ download and install updates. Use --check to only check for updates without inst
 func getPlatformString() string {
 	goos := runtime.GOOS
 	goarch := runtime.GOARCH
-	
+
 	osName := map[string]string{
 		"darwin":  "macOS",
-		"linux":   "Linux", 
+		"linux":   "Linux",
 		"windows": "Windows",
 	}[goos]
 	if osName == "" {
 		osName = goos
 	}
-	
+
 	archName := map[string]string{
 		"amd64": "Intel/AMD64",
 		"arm64": "ARM64",
@@ -120,6 +120,6 @@ func getPlatformString() string {
 	if archName == "" {
 		archName = goarch
 	}
-	
+
 	return fmt.Sprintf("%s/%s", osName, archName)
 }

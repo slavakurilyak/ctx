@@ -24,7 +24,7 @@ func killProcessGroup(cmd *exec.Cmd) error {
 	if cmd.Process == nil {
 		return nil
 	}
-	
+
 	// Send SIGTERM to entire process group (negative PID targets the group)
 	// This gives processes a chance to cleanup gracefully
 	if err := syscall.Kill(-cmd.Process.Pid, syscall.SIGTERM); err != nil {
@@ -34,7 +34,7 @@ func killProcessGroup(cmd *exec.Cmd) error {
 			return nil
 		}
 	}
-	
+
 	// Give processes a brief moment to handle SIGTERM
 	// Default to 100ms, but allow configuration via environment variable
 	gracePeriod := 100 * time.Millisecond
@@ -44,11 +44,11 @@ func killProcessGroup(cmd *exec.Cmd) error {
 		}
 	}
 	time.Sleep(gracePeriod)
-	
+
 	// Force kill any remaining processes in the group
 	// Ignore errors as processes might have already terminated
 	_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-	
+
 	return nil
 }
 

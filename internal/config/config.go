@@ -31,17 +31,17 @@ type Config struct {
 	NoTelemetry       bool
 	NoTelemetrySource string // New field to track the source
 	Limits            LimitsConfig
-	Auth              *AuthConfig     `yaml:"auth,omitempty"`
+	Auth              *AuthConfig         `yaml:"auth,omitempty"`
 	Installation      *InstallationConfig `yaml:"installation,omitempty"`
 }
 
 // InstallationConfig tracks how ctx was installed and update preferences
 type InstallationConfig struct {
-	Method               string    `yaml:"method,omitempty"`               // "install-script", "go-install", "manual", "pre-built"
-	AutoUpdateCheck      bool      `yaml:"auto_update_check,omitempty"`    // Whether to check for updates automatically
-	LastUpdateCheck      time.Time `yaml:"last_update_check,omitempty"`    // Last time we checked for updates
-	UpdateCheckInterval  time.Duration `yaml:"update_check_interval,omitempty"` // How often to check (default: 24h)
-	SkipVersions         []string  `yaml:"skip_versions,omitempty"`        // Versions to skip
+	Method              string        `yaml:"method,omitempty"`                // "install-script", "go-install", "manual", "pre-built"
+	AutoUpdateCheck     bool          `yaml:"auto_update_check,omitempty"`     // Whether to check for updates automatically
+	LastUpdateCheck     time.Time     `yaml:"last_update_check,omitempty"`     // Last time we checked for updates
+	UpdateCheckInterval time.Duration `yaml:"update_check_interval,omitempty"` // How often to check (default: 24h)
+	SkipVersions        []string      `yaml:"skip_versions,omitempty"`         // Versions to skip
 }
 
 type AuthConfig struct {
@@ -72,11 +72,11 @@ var defaultConfig = &Config{
 
 func Get() *Config {
 	cfg := &Config{
-		TokenModel:     getEnvOrDefault("CTX_TOKEN_MODEL", defaultConfig.TokenModel),
-		OutputFormat:   getEnvOrDefault("CTX_OUTPUT_FORMAT", defaultConfig.OutputFormat),
-		CacheDir:       getCacheDir(),
+		TokenModel:   getEnvOrDefault("CTX_TOKEN_MODEL", defaultConfig.TokenModel),
+		OutputFormat: getEnvOrDefault("CTX_OUTPUT_FORMAT", defaultConfig.OutputFormat),
+		CacheDir:     getCacheDir(),
 	}
-	
+
 	// Parse timeout
 	if timeoutStr := os.Getenv("CTX_TIMEOUT"); timeoutStr != "" {
 		if timeout, err := time.ParseDuration(timeoutStr); err == nil {
@@ -87,12 +87,12 @@ func Get() *Config {
 	} else {
 		cfg.DefaultTimeout = defaultConfig.DefaultTimeout
 	}
-	
+
 	// Parse CTX_PRETTY
 	if prettyStr := os.Getenv("CTX_PRETTY"); prettyStr == "true" {
 		cfg.PrettyOutput = true
 	}
-	
+
 	return cfg
 }
 
@@ -108,13 +108,13 @@ func getCacheDir() string {
 	if dir := os.Getenv("TIKTOKEN_CACHE_DIR"); dir != "" {
 		return dir
 	}
-	
+
 	// Use default cache directory
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return ""
 	}
-	
+
 	return filepath.Join(homeDir, ".cache", "tiktoken")
 }
 
@@ -124,40 +124,40 @@ func LoadConfigFromFile() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	configPath := filepath.Join(homeDir, ".config", "ctx", "config.yaml")
-	
+
 	// Check if file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return nil, nil // No config file, return nil
 	}
-	
+
 	// Read the file
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Parse YAML
 	var fileConfig struct {
-		TokenModel     string           `yaml:"token_model,omitempty"`
-		DefaultTimeout string           `yaml:"default_timeout,omitempty"`
-		OutputFormat   string           `yaml:"output_format,omitempty"`
-		CacheDir       string           `yaml:"cache_dir,omitempty"`
-		NoTokens       bool             `yaml:"no_tokens,omitempty"`
-		NoHistory      bool             `yaml:"no_history,omitempty"`
-		NoTelemetry    bool             `yaml:"no_telemetry,omitempty"`
-		Limits         LimitsConfig     `yaml:"limits,omitempty"`
-		Auth           *AuthConfig      `yaml:"auth,omitempty"`
+		TokenModel     string       `yaml:"token_model,omitempty"`
+		DefaultTimeout string       `yaml:"default_timeout,omitempty"`
+		OutputFormat   string       `yaml:"output_format,omitempty"`
+		CacheDir       string       `yaml:"cache_dir,omitempty"`
+		NoTokens       bool         `yaml:"no_tokens,omitempty"`
+		NoHistory      bool         `yaml:"no_history,omitempty"`
+		NoTelemetry    bool         `yaml:"no_telemetry,omitempty"`
+		Limits         LimitsConfig `yaml:"limits,omitempty"`
+		Auth           *AuthConfig  `yaml:"auth,omitempty"`
 	}
-	
+
 	if err := yaml.Unmarshal(data, &fileConfig); err != nil {
 		return nil, err
 	}
-	
+
 	// Build config from file
 	cfg := &Config{}
-	
+
 	if fileConfig.TokenModel != "" {
 		cfg.TokenModel = fileConfig.TokenModel
 	}
@@ -172,20 +172,20 @@ func LoadConfigFromFile() (*Config, error) {
 			cfg.DefaultTimeout = d
 		}
 	}
-	
+
 	cfg.NoTokens = fileConfig.NoTokens
 	cfg.NoHistory = fileConfig.NoHistory
 	cfg.NoTelemetry = fileConfig.NoTelemetry
 	cfg.Limits = fileConfig.Limits
 	cfg.Auth = fileConfig.Auth
-	
+
 	return cfg, nil
 }
 
 // NewFromFlagsAndEnv creates a Config object by layering flag, environment, and default values.
 func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 	// 1. Start with defaults
-	cfg := Get() // Assumes Get() provides default values
+	cfg := Get()                          // Assumes Get() provides default values
 	cfg.NoTelemetrySource = SourceDefault // Initialize with default source
 
 	// 2. Layer on file configuration
@@ -213,15 +213,15 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			cfg.NoTelemetry = fileConfig.NoTelemetry
 			cfg.NoTelemetrySource = "config file"
 		}
-		
+
 		// Merge limits
 		cfg.Limits = fileConfig.Limits
-		
+
 		// Also set the deprecated MaxTokens if provided in Limits
 		if fileConfig.Limits.MaxTokens != nil {
 			cfg.MaxTokens = *fileConfig.Limits.MaxTokens
 		}
-		
+
 		// Merge Auth configuration
 		if fileConfig.Auth != nil {
 			cfg.Auth = fileConfig.Auth
@@ -229,7 +229,7 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			// Initialize empty Auth config if not in file
 			cfg.Auth = &AuthConfig{}
 		}
-		
+
 		// Merge Installation configuration
 		if fileConfig.Installation != nil {
 			cfg.Installation = fileConfig.Installation
@@ -271,7 +271,7 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 	// Handle other env-based configs
 	cfg.NoHistory = isPrivateEnv || noHistoryEnv
 	cfg.NoTokens = noTokensEnv
-	
+
 	// Handle max tokens from environment
 	if maxTokensStr := os.Getenv("CTX_MAX_TOKENS"); maxTokensStr != "" {
 		if mt, err := strconv.ParseInt(maxTokensStr, 10, 64); err == nil && mt > 0 {
@@ -280,26 +280,26 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			cfg.Limits.MaxTokens = &mt
 		}
 	}
-	
+
 	// Handle other limit environment variables
 	if maxOutputBytesStr := os.Getenv("CTX_MAX_OUTPUT_BYTES"); maxOutputBytesStr != "" {
 		if mob, err := strconv.ParseInt(maxOutputBytesStr, 10, 64); err == nil && mob > 0 {
 			cfg.Limits.MaxOutputBytes = &mob
 		}
 	}
-	
+
 	if maxLinesStr := os.Getenv("CTX_MAX_LINES"); maxLinesStr != "" {
 		if ml, err := strconv.ParseInt(maxLinesStr, 10, 64); err == nil && ml > 0 {
 			cfg.Limits.MaxLines = &ml
 		}
 	}
-	
+
 	if maxPipelineStagesStr := os.Getenv("CTX_MAX_PIPELINE_STAGES"); maxPipelineStagesStr != "" {
 		if mps, err := strconv.Atoi(maxPipelineStagesStr); err == nil && mps > 0 {
 			cfg.Limits.MaxPipelineStages = &mps
 		}
 	}
-	
+
 	// Handle API endpoint from environment (overrides file config)
 	if apiEndpoint := os.Getenv("CTX_API_ENDPOINT"); apiEndpoint != "" {
 		if cfg.Auth == nil {
@@ -307,7 +307,7 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 		}
 		cfg.Auth.APIEndpoint = apiEndpoint
 	}
-	
+
 	// Handle CTX_PRETTY environment variable (but only if flag not explicitly set)
 	if prettyStr := os.Getenv("CTX_PRETTY"); prettyStr == "true" && !cmd.Flags().Changed("pretty") {
 		cfg.PrettyOutput = true
@@ -334,21 +334,21 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			cfg.Limits.MaxTokens = &mt
 		}
 	}
-	
+
 	if cmd.Flags().Changed("max-output-bytes") {
 		mob, _ := cmd.Flags().GetInt64("max-output-bytes")
 		if mob > 0 {
 			cfg.Limits.MaxOutputBytes = &mob
 		}
 	}
-	
+
 	if cmd.Flags().Changed("max-lines") {
 		ml, _ := cmd.Flags().GetInt64("max-lines")
 		if ml > 0 {
 			cfg.Limits.MaxLines = &ml
 		}
 	}
-	
+
 	if cmd.Flags().Changed("max-pipeline-stages") {
 		mps, _ := cmd.Flags().GetInt("max-pipeline-stages")
 		if mps > 0 {
@@ -371,14 +371,14 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 			cfg.NoHistory = true
 		}
 	}
-	
+
 	if cmd.Flags().Changed("no-telemetry") {
 		if v, _ := cmd.Flags().GetBool("no-telemetry"); v {
 			cfg.NoTelemetry = true
 			cfg.NoTelemetrySource = "--no-telemetry " + SourceFlag
 		}
 	}
-	
+
 	if cmd.Flags().Changed("no-tokens") {
 		if v, _ := cmd.Flags().GetBool("no-tokens"); v {
 			cfg.NoTokens = true
@@ -389,7 +389,7 @@ func NewFromFlagsAndEnv(cmd *cobra.Command) *Config {
 	if !cfg.NoTelemetry {
 		cfg.NoTelemetrySource = SourceDefault
 	}
-	
+
 	return cfg
 }
 
@@ -417,16 +417,16 @@ func (c *Config) SaveConfig() error {
 
 	// Convert to file config struct (for YAML serialization)
 	fileConfig := struct {
-		TokenModel    string               `yaml:"token_model,omitempty"`
-		Timeout       string               `yaml:"timeout,omitempty"`
-		OutputFormat  string               `yaml:"output_format,omitempty"`
-		PrettyOutput  bool                 `yaml:"pretty_output,omitempty"`
-		NoTokens      bool                 `yaml:"no_tokens,omitempty"`
-		NoHistory     bool                 `yaml:"no_history,omitempty"`
-		NoTelemetry   bool                 `yaml:"no_telemetry,omitempty"`
-		Limits        LimitsConfig         `yaml:"limits,omitempty"`
-		Auth          *AuthConfig          `yaml:"auth,omitempty"`
-		Installation  *InstallationConfig  `yaml:"installation,omitempty"`
+		TokenModel   string              `yaml:"token_model,omitempty"`
+		Timeout      string              `yaml:"timeout,omitempty"`
+		OutputFormat string              `yaml:"output_format,omitempty"`
+		PrettyOutput bool                `yaml:"pretty_output,omitempty"`
+		NoTokens     bool                `yaml:"no_tokens,omitempty"`
+		NoHistory    bool                `yaml:"no_history,omitempty"`
+		NoTelemetry  bool                `yaml:"no_telemetry,omitempty"`
+		Limits       LimitsConfig        `yaml:"limits,omitempty"`
+		Auth         *AuthConfig         `yaml:"auth,omitempty"`
+		Installation *InstallationConfig `yaml:"installation,omitempty"`
 	}{
 		TokenModel:   c.TokenModel,
 		OutputFormat: c.OutputFormat,
@@ -457,17 +457,17 @@ func (c *Config) SetInstallationMethod(method string) error {
 		c.Installation = &InstallationConfig{}
 	}
 	c.Installation.Method = method
-	
+
 	// Set reasonable defaults for auto-update
 	if method == "install-script" || method == "manual" {
 		c.Installation.AutoUpdateCheck = true
 	} else {
 		c.Installation.AutoUpdateCheck = false
 	}
-	
+
 	if c.Installation.UpdateCheckInterval == 0 {
 		c.Installation.UpdateCheckInterval = 24 * time.Hour
 	}
-	
+
 	return c.SaveConfig()
 }

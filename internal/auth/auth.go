@@ -127,10 +127,10 @@ type UserInfo struct {
 
 // PricingInfo represents pricing information
 type PricingInfo struct {
-	Plan         string  `json:"plan"`           // "individual" or "team"
-	Currency     string  `json:"currency"`       // USD, EUR, etc.
-	Amount       float64 `json:"amount"`         // Current price
-	BillingCycle string  `json:"billing_cycle"`  // monthly, annual
+	Plan         string  `json:"plan"`            // "individual" or "team"
+	Currency     string  `json:"currency"`        // USD, EUR, etc.
+	Amount       float64 `json:"amount"`          // Current price
+	BillingCycle string  `json:"billing_cycle"`   // monthly, annual
 	Seats        int     `json:"seats,omitempty"` // Number of seats for team plans
 	NextBilling  string  `json:"next_billing,omitempty"`
 }
@@ -141,7 +141,7 @@ func (m *Manager) validateAPIKey(apiKey string) (*UserInfo, error) {
 	if m.config != nil && m.config.Auth != nil && m.config.Auth.APIEndpoint != "" {
 		endpoint = m.config.Auth.APIEndpoint
 	}
-	
+
 	// API endpoint must be configured via environment or config
 	if endpoint == "" {
 		// Try to get from environment as fallback
@@ -189,7 +189,7 @@ func (m *Manager) updateConfigFile(userInfo *UserInfo) error {
 	}
 
 	configPath := filepath.Join(homeDir, ".config", "ctx", "config.yaml")
-	
+
 	// Ensure directory exists
 	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
 		return err
@@ -211,12 +211,12 @@ func (m *Manager) updateConfigFile(userInfo *UserInfo) error {
 	if existingAuth != nil && existingAuth["api_endpoint"] != nil {
 		apiEndpoint = existingAuth["api_endpoint"].(string)
 	}
-	
+
 	// If no existing endpoint, try to get from environment
 	if apiEndpoint == "" {
 		apiEndpoint = os.Getenv("CTX_API_ENDPOINT")
 	}
-	
+
 	// Update auth section
 	configData["auth"] = map[string]interface{}{
 		"api_key":      "***", // Placeholder - actual key is in keychain
@@ -243,7 +243,7 @@ func (m *Manager) clearConfigFile() error {
 	}
 
 	configPath := filepath.Join(homeDir, ".config", "ctx", "config.yaml")
-	
+
 	// Read existing config
 	data, err := os.ReadFile(configPath)
 	if err != nil {
@@ -288,7 +288,7 @@ func (m *Manager) getCurrentUserEmail() string {
 	}
 
 	configPath := filepath.Join(homeDir, ".config", "ctx", "config.yaml")
-	
+
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return ""

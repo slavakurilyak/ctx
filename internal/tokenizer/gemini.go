@@ -18,12 +18,12 @@ type GeminiTokenizer struct {
 func NewGeminiTokenizer(provider string) (*GeminiTokenizer, error) {
 	// Use a default Gemini model for tokenization
 	defaultModel := "gemini-1.5-pro"
-	
+
 	tok, err := tokenizer.New(defaultModel)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Gemini tokenizer for provider %s: %w", provider, err)
 	}
-	
+
 	return &GeminiTokenizer{
 		tok:      tok,
 		provider: provider,
@@ -43,7 +43,6 @@ func (g *GeminiTokenizer) CountTokens(text string) (int, error) {
 func (g *GeminiTokenizer) GetModelName() string {
 	return g.provider
 }
-
 
 // IsGeminiModel checks if the provider is Gemini (kept for backward compatibility)
 func IsGeminiModel(provider string) bool {

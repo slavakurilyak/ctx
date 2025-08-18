@@ -14,10 +14,10 @@ func (f *DefaultTokenizerFactory) CreateTokenizer(provider string) (Tokenizer, e
 	if provider == "" {
 		return nil, fmt.Errorf("provider name cannot be empty")
 	}
-	
+
 	// Normalize provider name
 	providerLower := strings.ToLower(provider)
-	
+
 	switch providerLower {
 	case "anthropic", "openai":
 		// Both use tiktoken with cl100k_base encoding

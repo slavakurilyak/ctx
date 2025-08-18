@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 	"time"
-	
+
 	"github.com/google/uuid"
 	"github.com/slavakurilyak/ctx/internal/config"
 	"github.com/slavakurilyak/ctx/internal/executor"
@@ -41,26 +41,26 @@ func (e *Enricher) EnrichOutput(ctx context.Context, result *executor.ExecutionR
 		result.ExitCode,
 		result.Duration,
 	)
-	
+
 	// Populate metadata context fields
 	output.Metadata.Timestamp = time.Now().Format(time.RFC3339)
 	output.Metadata.SessionID = uuid.New().String()
-	
+
 	// Get working directory
 	if cwd, err := os.Getwd(); err == nil {
 		output.Metadata.Directory = cwd
 	}
-	
+
 	// Get user
 	if user := os.Getenv("USER"); user != "" {
 		output.Metadata.User = user
 	}
-	
+
 	// Get hostname
 	if hostname, err := os.Hostname(); err == nil {
 		output.Metadata.Host = hostname
 	}
-	
+
 	// Count tokens if enabled and tokenizer is available
 	if e.shouldCountTokens() && e.tokenizer != nil {
 		tokenCount, err := e.tokenizer.CountTokens(string(result.Output))
@@ -69,7 +69,7 @@ func (e *Enricher) EnrichOutput(ctx context.Context, result *executor.ExecutionR
 		}
 		// If token counting fails, we still return the output without tokens
 	}
-	
+
 	// Get trace context if telemetry is enabled
 	if e.telemetry != nil {
 		if traceContext := e.telemetry.GetTraceContext(ctx); traceContext != nil {
@@ -80,12 +80,12 @@ func (e *Enricher) EnrichOutput(ctx context.Context, result *executor.ExecutionR
 			}
 		}
 	}
-	
+
 	// Save to history if history manager is available
 	if e.history != nil {
 		e.history.SaveRecord(output)
 	}
-	
+
 	return output, nil
 }
 

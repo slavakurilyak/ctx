@@ -18,7 +18,7 @@ import (
 func main() {
 	// Load .env file if it exists (ignore error if not found)
 	_ = godotenv.Load()
-	
+
 	// We no longer pre-build the AppContext here.
 	// It will be constructed in PersistentPreRunE after flags are parsed.
 	rootCmd := cmd.NewRootCmdWithDI()
@@ -40,8 +40,8 @@ func main() {
 		// Check if this is a flag parsing error and improve the message
 		errStr := err.Error()
 		if strings.Contains(errStr, "unknown shorthand flag") ||
-		   strings.Contains(errStr, "unknown flag") ||
-		   strings.Contains(errStr, "unknown command") {
+			strings.Contains(errStr, "unknown flag") ||
+			strings.Contains(errStr, "unknown command") {
 			// The error message will be improved by ImproveErrorMessage if called
 			// But in case it wasn't, provide helpful guidance here too
 			if !strings.Contains(errStr, "Try one of these methods") {

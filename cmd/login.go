@@ -30,7 +30,7 @@ local configuration file.`,
 func runLogin(cmd *cobra.Command, args []string) error {
 	// Load config from file and environment
 	cfg := config.NewFromFlagsAndEnv(cmd)
-	
+
 	// Check if already logged in
 	authManager := auth.NewManager(cfg)
 	if authManager.IsAuthenticated() {
@@ -84,7 +84,7 @@ func readAPIKey() (string, error) {
 		}
 		return string(bytePassword), nil
 	}
-	
+
 	// Not a terminal, read normally
 	return readAPIKeyPlain()
 }

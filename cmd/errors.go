@@ -10,17 +10,17 @@ func ImproveErrorMessage(err error, originalArgs []string) error {
 	if err == nil {
 		return nil
 	}
-	
+
 	errStr := err.Error()
-	
+
 	// Check for common flag parsing errors
-	if strings.Contains(errStr, "unknown shorthand flag") || 
-	   strings.Contains(errStr, "unknown flag") ||
-	   strings.Contains(errStr, "unknown command") {
-		
+	if strings.Contains(errStr, "unknown shorthand flag") ||
+		strings.Contains(errStr, "unknown flag") ||
+		strings.Contains(errStr, "unknown command") {
+
 		// Build the command string for examples
 		cmdStr := strings.Join(originalArgs, " ")
-		
+
 		return fmt.Errorf(`%s
 
 It looks like ctx is trying to parse your command's flags as its own.
@@ -39,7 +39,7 @@ Try one of these methods:
      ctx "%s"
      ctx --max-tokens 5000 "%s"
 
-Remember: ctx flags (like --max-tokens) must come BEFORE the separator or subcommand.`, 
+Remember: ctx flags (like --max-tokens) must come BEFORE the separator or subcommand.`,
 			err.Error(),
 			cmdStr,
 			cmdStr,
@@ -48,7 +48,7 @@ Remember: ctx flags (like --max-tokens) must come BEFORE the separator or subcom
 			cmdStr,
 			cmdStr)
 	}
-	
+
 	// Return original error if no improvement needed
 	return err
 }

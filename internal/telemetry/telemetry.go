@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"time"
-	
+
 	"github.com/slavakurilyak/ctx/internal/version"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -37,30 +37,30 @@ func Initialize(ctx context.Context) (*Manager, error) {
 	if isDisabled() {
 		return &Manager{enabled: false}, nil
 	}
-	
+
 	// Create resource describing this application
 	res, err := createResource(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create resource: %w", err)
 	}
-	
+
 	// Create OTLP exporter
 	exporter, err := createOTLPExporter(ctx)
 	if err != nil {
 		// If exporter fails, telemetry is disabled but app continues
 		return &Manager{enabled: false}, nil
 	}
-	
+
 	// Create TracerProvider with the exporter
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(res),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	)
-	
+
 	// Register as global tracer provider
 	otel.SetTracerProvider(tp)
-	
+
 	// Set up propagation (W3C Trace Context by default)
 	otel.SetTextMapPropagator(
 		propagation.NewCompositeTextMapPropagator(
@@ -68,13 +68,13 @@ func Initialize(ctx context.Context) (*Manager, error) {
 			propagation.Baggage{},
 		),
 	)
-	
+
 	manager := &Manager{
 		enabled:        true,
 		tracer:         tp.Tracer("github.com/slavakurilyak/ctx"),
 		tracerProvider: tp,
 	}
-	
+
 	globalManager = manager
 	return manager, nil
 }
@@ -93,7 +93,7 @@ func (m *Manager) StartCommandSpan(ctx context.Context, command string) (context
 		// Return a no-op span
 		return ctx, trace.SpanFromContext(ctx)
 	}
-	
+
 	return m.tracer.Start(ctx, "command.execute",
 		trace.WithSpanKind(trace.SpanKindClient),
 		trace.WithAttributes(
@@ -110,18 +110,18 @@ func (m *Manager) RecordCommandResult(span trace.Span, exitCode int, duration ti
 	if !m.enabled || span == nil {
 		return
 	}
-	
+
 	// Add result attributes
 	span.SetAttributes(
 		attribute.Int("command.exit_code", exitCode),
 		attribute.Int64("command.duration_ms", duration.Milliseconds()),
 		attribute.Int("command.output_bytes", outputBytes),
 	)
-	
+
 	if tokenCount != nil {
 		span.SetAttributes(attribute.Int("command.token_count", *tokenCount))
 	}
-	
+
 	// Set status based on exit code
 	if exitCode != 0 {
 		span.SetAttributes(attribute.Bool("command.error", true))
@@ -141,17 +141,17 @@ func (m *Manager) GetTraceContext(ctx context.Context) map[string]string {
 	if !m.enabled {
 		return nil
 	}
-	
+
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
 		return nil
 	}
-	
+
 	spanCtx := span.SpanContext()
 	if !spanCtx.IsValid() {
 		return nil
 	}
-	
+
 	return map[string]string{
 		"trace_id":    spanCtx.TraceID().String(),
 		"span_id":     spanCtx.SpanID().String(),
@@ -164,7 +164,7 @@ func (m *Manager) Shutdown(ctx context.Context) error {
 	if !m.enabled || m.tracerProvider == nil {
 		return nil
 	}
-	
+
 	return m.tracerProvider.Shutdown(ctx)
 }
 
@@ -179,30 +179,30 @@ func isDisabled() bool {
 	// Check various environment variables that might disable telemetry
 	disableVars := []string{
 		"CTX_NO_TELEMETRY",
-		"CTX_NO_OPENTELEMETRY", 
+		"CTX_NO_OPENTELEMETRY",
 		"CTX_PRIVATE",
 		"OTEL_SDK_DISABLED",
 	}
-	
+
 	for _, v := range disableVars {
 		if os.Getenv(v) == "true" || os.Getenv(v) == "1" {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
 func createResource(ctx context.Context) (*resource.Resource, error) {
 	// Get hostname
 	hostname, _ := os.Hostname()
-	
+
 	// Get user
 	user := os.Getenv("USER")
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
-	
+
 	// Create resource with attributes
 	return resource.NewWithAttributes(
 		"",
@@ -225,30 +225,30 @@ func createOTLPExporter(ctx context.Context) (*otlptrace.Exporter, error) {
 	if endpoint == "" {
 		endpoint = "localhost:4318" // Default OTLP HTTP endpoint
 	}
-	
+
 	// Configure OTLP exporter options
 	opts := []otlptracehttp.Option{
 		otlptracehttp.WithEndpoint(endpoint),
 	}
-	
+
 	// Check for insecure mode (for local development)
-	if os.Getenv("OTEL_EXPORTER_OTLP_INSECURE") == "true" || 
-	   os.Getenv("CTX_OTLP_INSECURE") == "true" {
+	if os.Getenv("OTEL_EXPORTER_OTLP_INSECURE") == "true" ||
+		os.Getenv("CTX_OTLP_INSECURE") == "true" {
 		opts = append(opts, otlptracehttp.WithInsecure())
 	}
-	
+
 	// Add headers if specified
 	if headers := os.Getenv("OTEL_EXPORTER_OTLP_HEADERS"); headers != "" {
 		opts = append(opts, otlptracehttp.WithHeaders(parseHeaders(headers)))
 	}
-	
+
 	// Create the exporter
 	client := otlptracehttp.NewClient(opts...)
 	exporter, err := otlptrace.New(ctx, client)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OTLP exporter: %w", err)
 	}
-	
+
 	return exporter, nil
 }
 
@@ -257,7 +257,7 @@ func detectCommandType(command string) string {
 	if command == "" {
 		return "unknown"
 	}
-	
+
 	// Extract first word
 	firstSpace := -1
 	for i, ch := range command {
@@ -266,12 +266,12 @@ func detectCommandType(command string) string {
 			break
 		}
 	}
-	
+
 	cmdName := command
 	if firstSpace > 0 {
 		cmdName = command[:firstSpace]
 	}
-	
+
 	// Categorize by command type
 	switch cmdName {
 	case "psql", "mysql", "sqlite3", "redis-cli", "mongosh":

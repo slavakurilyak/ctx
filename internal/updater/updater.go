@@ -161,7 +161,7 @@ func (u *Updater) findAssetForPlatform(assets []Asset) *Asset {
 
 	// Build expected filename patterns
 	var patterns []string
-	
+
 	if goos == "windows" {
 		patterns = []string{
 			fmt.Sprintf("ctx-%s-%s.exe", goos, goarch),
@@ -173,7 +173,7 @@ func (u *Updater) findAssetForPlatform(assets []Asset) *Asset {
 			fmt.Sprintf("ctx-%s-%s", goos, goarch),
 			fmt.Sprintf("ctx_%s_%s", goos, goarch),
 		}
-		
+
 		// Add darwin-specific patterns
 		if goos == "darwin" {
 			patterns = append(patterns, fmt.Sprintf("ctx-darwin-%s", goarch))
@@ -285,7 +285,7 @@ del "%%~f0" >nul 2>&1
 	}
 
 	fmt.Printf("Update will complete after ctx exits. Please restart ctx after a few seconds.\n")
-	
+
 	// The batch script will run after this process exits
 	// We can't wait for it or the executable will be locked
 	return nil
@@ -298,7 +298,7 @@ func isNewerVersion(latest, current string) bool {
 	if current == "dev" || current == "unknown" || strings.HasPrefix(current, "dev-") {
 		return true
 	}
-	
+
 	// Simple string comparison (works for basic versioning like v0.1.0, v0.2.0)
 	// For production, you'd want proper semantic version comparison
 	return latest > current

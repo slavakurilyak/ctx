@@ -15,26 +15,26 @@ const CurrentSchemaVersion = "0.1"
 // Output represents the final output structure for ctx commands
 // This is the structure that gets printed to console and saved to history
 type Output struct {
-	Tokens        int              `json:"tokens"`         // Token count - most important, shown first
-	Output        string           `json:"output"`         // Command output - second most important
-	Input         string           `json:"input"`          // Command executed - third
-	Metadata      MetadataSection  `json:"metadata"`       // Additional details
+	Tokens        int               `json:"tokens"`   // Token count - most important, shown first
+	Output        string            `json:"output"`   // Command output - second most important
+	Input         string            `json:"input"`    // Command executed - third
+	Metadata      MetadataSection   `json:"metadata"` // Additional details
 	Telemetry     *TelemetrySection `json:"telemetry,omitempty"`
-	SchemaVersion string           `json:"schema_version"` // Schema version for parsers
+	SchemaVersion string            `json:"schema_version"` // Schema version for parsers
 }
 
 // MetadataSection contains execution details and context
 type MetadataSection struct {
 	// Execution results
 	ExitCode      int    `json:"exit_code"`
-	Success       bool   `json:"success"` // Derived from exit_code (0 = true)
-	Error         string `json:"error,omitempty"` // Error message if one occurred
+	Success       bool   `json:"success"`                  // Derived from exit_code (0 = true)
+	Error         string `json:"error,omitempty"`          // Error message if one occurred
 	FailureReason string `json:"failure_reason,omitempty"` // Machine-readable failure reason (e.g., "line_limit_exceeded")
-	
+
 	// Performance metrics
 	Duration int `json:"duration"` // Execution time in milliseconds
 	Bytes    int `json:"bytes"`    // Output size in bytes
-	
+
 	// Context information
 	Timestamp string `json:"timestamp"`  // RFC3339 formatted timestamp
 	Directory string `json:"directory"`  // Working directory

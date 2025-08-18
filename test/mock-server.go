@@ -59,22 +59,22 @@ func main() {
 	// API key validation endpoint
 	http.HandleFunc("/v1/validate", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Received %s request to %s", r.Method, r.URL.Path)
-		
+
 		// Check authorization header
 		auth := r.Header.Get("Authorization")
 		if !strings.HasPrefix(auth, "Bearer ") {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		
+
 		apiKey := strings.TrimPrefix(auth, "Bearer ")
 		log.Printf("Validating API key: %s", apiKey)
-		
+
 		// Mock validation - accept any key starting with "test-"
 		if strings.HasPrefix(apiKey, "test-") {
 			// Determine pricing based on API key
 			var pricing *PricingInfo
-			
+
 			if strings.Contains(apiKey, "team") {
 				// Team plan pricing
 				pricing = &PricingInfo{
@@ -95,7 +95,7 @@ func main() {
 					NextBilling:  time.Now().Add(30 * 24 * time.Hour).Format("2006-01-02"),
 				}
 			}
-			
+
 			resp := ValidationResponse{
 				Valid:      true,
 				Email:      "test@example.com",
@@ -111,60 +111,60 @@ func main() {
 			http.Error(w, "Invalid API key", http.StatusUnauthorized)
 		}
 	})
-	
+
 	// Pre-tool-use webhook endpoint
 	http.HandleFunc("/v1/pre-tool-use", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Received %s request to %s", r.Method, r.URL.Path)
-		
+
 		var req PreToolUseRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		
+
 		log.Printf("Pre-tool-use webhook for command: %s", req.Command.Raw)
-		
+
 		// Mock webhook logic
 		resp := PreToolUseResponse{
 			Action: "ALLOW",
 		}
-		
+
 		// Block dangerous commands
 		if strings.Contains(req.Command.Raw, "rm -rf") {
 			resp.Action = "BLOCK"
 			resp.Message = "Command blocked: potentially dangerous rm -rf detected"
 		}
-		
+
 		// Warn about sudo commands
 		if strings.Contains(req.Command.Raw, "sudo") {
 			resp.Action = "WARN"
 			resp.Message = "Warning: Command requires elevated privileges"
 		}
-		
+
 		// Modify ls commands to add -la
 		if len(req.Command.Parsed) > 0 && req.Command.Parsed[0] == "ls" {
 			resp.Action = "MODIFY"
 			resp.Message = "Command modified: added -la flags for detailed listing"
 			// Note: In real implementation, would return modified command
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 		log.Printf("Pre-tool-use response: %s", resp.Action)
 	})
-	
+
 	// Post-tool-use webhook endpoint
 	http.HandleFunc("/v1/post-tool-use", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Received %s request to %s", r.Method, r.URL.Path)
-		
+
 		var req PostToolUseRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		
+
 		log.Printf("Post-tool-use webhook received")
-		
+
 		// Mock insights
 		resp := PostToolUseResponse{
 			Insights: []struct {
@@ -179,12 +179,12 @@ func main() {
 				},
 			},
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 		log.Printf("Post-tool-use insights sent")
 	})
-	
+
 	port := ":8899"
 	log.Printf("Starting mock ctx.pro server on %s", port)
 	log.Printf("Test with: CTX_API_ENDPOINT=http://localhost:8899")
