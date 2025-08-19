@@ -260,7 +260,29 @@ ctx -- docker build .
 CTX_WAIT_DELAY=5s ctx --timeout 10s -- docker-compose up
 ```
 
-## Resources & Contributing
+## Development
+
+### Building from Source
+
+**Local Development Build:**
+```bash
+git clone https://github.com/slavakurilyak/ctx.git
+cd ctx
+go build -o ctx        # Creates ./ctx binary for testing
+./ctx version          # Test local build
+```
+
+**Global Installation:**
+```bash
+go install .           # Install to $GOPATH/bin (usually ~/bin or ~/go/bin)
+ctx version            # Test global installation
+```
+
+### Contributing
+
+Contributions are welcome! Please see the [Issues](https://github.com/slavakurilyak/ctx/issues) page for areas where help is needed.
+
+## Resources
 
 - **Announcement Blog**: [Read the announcement of `ctx`](https://slavakurilyak.com/posts/introducing-ctx)
 - **Repository**: [https://github.com/slavakurilyak/ctx](https://github.com/slavakurilyak/ctx)
