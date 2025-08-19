@@ -23,6 +23,29 @@ Modern AI agents struggle with external tools because raw command output is toke
 
 `ctx` solves this by wrapping any command in a structured JSON "context envelope." It adds precise token counts, execution metadata, and telemetry, enabling agents to make smarter, cost-aware decisions.
 
+## The `ctx` Advantage: Drastic Cost Reduction
+
+`ctx` enables a "measure-then-act" workflow that can reduce token consumption by over 95%.
+
+**Before `ctx` (Expensive):** An agent gets a huge, raw text blob.
+```bash
+# Agent sends the entire raw output to the LLM
+psql -c "SELECT * FROM users" | llm -p 'Summarize users'
+# Result: ~25,000 tokens consumed (~$1,125/month)
+```
+
+**With `ctx` (Efficient):** The agent first checks the cost, then refines its query.
+```bash
+# 1. Measure the token cost first
+ctx psql -c "SELECT * FROM users" | jq '.tokens'
+# Result: 25000
+
+# 2. Refine the query and execute safely
+ctx psql -c "SELECT status, COUNT(*) FROM users GROUP BY status" | llm
+# Result: ~100 tokens consumed (99.6% reduction)
+```
+This simple pattern transforms an expensive operation into a negligible one.
+
 ## Supported Coding Agents
 
 `ctx` integrates with leading AI coding assistants and agentic IDEs through simple setup commands. We're constantly expanding support to include more tools based on community needs.
@@ -58,29 +81,6 @@ Modern AI agents struggle with external tools because raw command output is toke
 | **BoltAI** | [Official site](https://boltai.com/) \| [Docs](https://docs.boltai.com/) | ✗ |
 | **Perplexity Desktop** | [Official site](https://perplexity.ai/downloads) \| [Docs](https://docs.perplexity.ai/docs) | ✗ |
 | **Claude Desktop** | [Official site](https://www.anthropic.com/claude) \| [Docs](https://docs.anthropic.com/en/docs/intro-to-claude) | ✗ |
-
-## The `ctx` Advantage: Drastic Cost Reduction
-
-`ctx` enables a "measure-then-act" workflow that can reduce token consumption by over 95%.
-
-**Before `ctx` (Expensive):** An agent gets a huge, raw text blob.
-```bash
-# Agent sends the entire raw output to the LLM
-psql -c "SELECT * FROM users" | llm -p 'Summarize users'
-# Result: ~25,000 tokens consumed (~$1,125/month)
-```
-
-**With `ctx` (Efficient):** The agent first checks the cost, then refines its query.
-```bash
-# 1. Measure the token cost first
-ctx psql -c "SELECT * FROM users" | jq '.tokens'
-# Result: 25000
-
-# 2. Refine the query and execute safely
-ctx psql -c "SELECT status, COUNT(*) FROM users GROUP BY status" | llm
-# Result: ~100 tokens consumed (99.6% reduction)
-```
-This simple pattern transforms an expensive operation into a negligible one.
 
 ## Key Features
 
