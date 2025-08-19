@@ -24,6 +24,9 @@ var (
 )
 
 const (
+	// Process access rights
+	PROCESS_ALL_ACCESS = 0x1F0FFF
+
 	// Job Object limit flags
 	JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
 
@@ -152,7 +155,7 @@ func killProcessGroup(cmd *exec.Cmd) error {
 
 	if exists && job != 0 {
 		// Terminate all processes in the job object
-		ret, _, err := procTerminateJobObject.Call(
+		ret, _, _ := procTerminateJobObject.Call(
 			uintptr(job),
 			1, // Exit code
 		)
@@ -216,7 +219,7 @@ func AssociateWithJobObject(cmd *exec.Cmd) error {
 	if exists && job != 0 {
 		// Get the process handle
 		// On Windows, cmd.Process.Pid is the process ID, we need to get the handle
-		processHandle, err := syscall.OpenProcess(syscall.PROCESS_ALL_ACCESS, false, uint32(cmd.Process.Pid))
+		processHandle, err := syscall.OpenProcess(PROCESS_ALL_ACCESS, false, uint32(cmd.Process.Pid))
 		if err != nil {
 			return fmt.Errorf("OpenProcess failed: %v", err)
 		}
