@@ -56,6 +56,7 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewClineCmd())
 	setupCmd.AddCommand(setup.NewGooseCmd())
 	setupCmd.AddCommand(setup.NewTraeCmd())
+	setupCmd.AddCommand(setup.NewOpenCodeCmd())
 
 	return setupCmd
 }
@@ -107,6 +108,7 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
 	fmt.Println("  ctx setup goose         # Goose AI Agent")
 	fmt.Println("  ctx setup trae          # Trae IDE")
+	fmt.Println("  ctx setup opencode      # OpenCode")
 	fmt.Println()
 	fmt.Println("Choose the tool you're using, then run the specific command.")
 	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")

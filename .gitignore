@@ -80,3 +80,9 @@ server/migrations/
 .kilocode/
 CLAUDE.md
 GEMINI.md
+
+# User files
+USER-*.md
+
+# AI files
+AI-*.md

@@ -68,7 +68,7 @@ This simple pattern transforms an expensive operation into a negligible one.
 | **Goose** | [Official site](https://block.github.io/goose/) \| [GitHub](https://github.com/block/goose) \| [Docs](https://block.github.io/goose/docs/) | ✓ (via `ctx setup goose`) |
 | **Visual Studio Code** | [Official site](https://code.visualstudio.com/) \| [GitHub](https://github.com/microsoft/vscode) \| [Docs](https://code.visualstudio.com/docs) | ✗ |
 | **Visual Studio 2022** | [Official site](https://visualstudio.microsoft.com/) \| [Docs](https://learn.microsoft.com/en-us/visualstudio/windows/) | ✗ |
-| **Opencode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✗ |
+| **OpenCode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✓ (via `ctx setup opencode`) |
 | **Augment Code** | [Official site](https://www.augmentcode.com/) \| [Docs](https://www.augmentcode.com/docs/getting-started) | ✗ |
 | **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ |
 | **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✓ (via `ctx setup trae`) |
@@ -164,6 +164,7 @@ ctx setup jetbrains     # JetBrains AI Assistant
 ctx setup gemini        # Gemini CLI
 ctx setup goose         # Goose AI Agent
 ctx setup trae          # Trae IDE
+ctx setup opencode      # OpenCode
 
 # See all supported tools:
 ctx setup
@@ -206,6 +207,7 @@ ctx setup goose     # Goose AI Agent
 ctx setup jetbrains # JetBrains AI Assistant
 ctx setup gemini    # Gemini CLI
 ctx setup trae      # Trae IDE
+ctx setup opencode   # OpenCode
 ```
 These commands create local configuration files that instruct your IDE's AI to wrap shell commands with `ctx`, promoting token-efficient workflows.
 
