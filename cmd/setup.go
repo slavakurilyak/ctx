@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/slavakurilyak/ctx/cmd/setup"
 	"github.com/spf13/cobra"
@@ -21,14 +20,14 @@ Available tools: claude, cursor, aider, windsurf, jetbrains, gemini, etc.
 
 When no tool is specified:
 - Interactive mode: Shows available tools and prompts for selection
-- Non-interactive mode: Use --non-interactive to default to Claude Code`,
+- Non-interactive mode: Use --non-interactive to default to AGENTS.md (universal format)`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// If no arguments provided, check for non-interactive mode
 			if len(args) == 0 {
 				nonInteractive, _ := cmd.Flags().GetBool("non-interactive")
 				if nonInteractive {
-					// Default to Claude Code for AI agents
-					return setupClaudeCode(force)
+					// Default to AGENTS.md for universal compatibility
+					return setupAgentsMd(force)
 				} else {
 					// Show available tools for human users
 					return showAvailableTools()
@@ -40,9 +39,10 @@ When no tool is specified:
 	}
 
 	setupCmd.Flags().BoolVar(&force, "force", false, "Overwrite existing files")
-	setupCmd.Flags().Bool("non-interactive", false, "Run in non-interactive mode (defaults to Claude Code)")
+	setupCmd.Flags().Bool("non-interactive", false, "Run in non-interactive mode (defaults to AGENTS.md)")
 
 	// Add subcommands for each tool
+	setupCmd.AddCommand(setup.NewAgentsCmd())  // Generic AGENTS.md (OpenAI standard)
 	setupCmd.AddCommand(setup.NewClaudeCmd())
 	setupCmd.AddCommand(setup.NewCursorCmd())
 	setupCmd.AddCommand(setup.NewWindsurfCmd())
@@ -61,39 +61,21 @@ When no tool is specified:
 	return setupCmd
 }
 
-// setupClaudeCode handles the default Claude Code setup
-func setupClaudeCode(force bool) error {
-	outputFile := "CLAUDE.md"
-
-	// Check if file exists and force flag is not set
-	if _, err := os.Stat(outputFile); err == nil && !force {
-		return fmt.Errorf("file %s already exists. Use --force to overwrite", outputFile)
+// setupAgentsMd handles the default AGENTS.md setup
+func setupAgentsMd(force bool) error {
+	// Reuse the agents command implementation
+	agentsCmd := setup.NewAgentsCmd()
+	if force {
+		agentsCmd.Flags().Set("force", "true")
 	}
-
-	// Get ctx help output
-	content, err := setup.GetCtxHelp()
-	if err != nil {
-		return err
-	}
-
-	// Format as markdown
-	markdownContent := fmt.Sprintf(`# ctx Documentation
-
-%s
-`, content)
-
-	// Write the file
-	if err := os.WriteFile(outputFile, []byte(markdownContent), 0644); err != nil {
-		return fmt.Errorf("failed to write %s: %v", outputFile, err)
-	}
-
-	fmt.Printf("Documentation generated: %s\n", outputFile)
-	return nil
+	return agentsCmd.RunE(agentsCmd, []string{})
 }
 
 // showAvailableTools displays available tools for human users
 func showAvailableTools() error {
 	fmt.Println("Available AI Tools for Setup:")
+	fmt.Println()
+	fmt.Println("  ctx setup agents        # AGENTS.md (OpenAI standard - works with multiple agents)")
 	fmt.Println()
 	fmt.Println("  ctx setup claude        # Claude Code/Desktop")
 	fmt.Println("  ctx setup cursor        # Cursor IDE")
@@ -111,7 +93,7 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup opencode      # OpenCode")
 	fmt.Println()
 	fmt.Println("Choose the tool you're using, then run the specific command.")
-	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to Claude Code.")
+	fmt.Println("For AI agents: Use 'ctx setup --non-interactive' to default to AGENTS.md.")
 	fmt.Println()
 
 	return nil

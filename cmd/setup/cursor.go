@@ -36,10 +36,10 @@ Examples:
 				return fmt.Errorf("file %s already exists. Use --force to overwrite", outputFile)
 			}
 
-			// Get ctx help output
-			content, err := GetCtxHelp()
+			// Generate rules using the shared generator
+			content, err := GenerateRules(".cursor/rules/ctx.mdc")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to generate rules: %v", err)
 			}
 
 			// Format as MDC (Markdown with metadata)
@@ -48,10 +48,7 @@ tags: [ctx, ai-tools, command-wrapper, token-efficiency]
 alwaysApply: true
 ---
 
-# ctx Documentation
-
-%s
-`, content)
+%s`, content)
 
 			// Write the file
 			if err := os.WriteFile(outputFile, []byte(mdcContent), 0644); err != nil {

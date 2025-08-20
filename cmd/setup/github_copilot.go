@@ -36,10 +36,10 @@ Examples:
 				return fmt.Errorf("file %s already exists. Use --force to overwrite", outputFile)
 			}
 
-			// Get ctx help output
-			content, err := GetCtxHelp()
+			// Generate rules using the shared generator
+			content, err := GenerateRules(".github/copilot-instructions.md")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to generate rules: %v", err)
 			}
 
 			// Format as markdown

@@ -3,8 +3,6 @@ package setup
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -32,18 +30,12 @@ Examples:
 				return fmt.Errorf("file %s already exists. Use --force to overwrite", outputFile)
 			}
 
-			// Get ctx help output
-			cmdCtx := exec.Command("ctx", "-h")
-			output, err := cmdCtx.Output()
+			// Generate rules using the shared generator
+			// OpenCode uses AGENTS.md format
+			content, err := GenerateRules("AGENTS.md")
 			if err != nil {
-				return fmt.Errorf("failed to get ctx help output: %v", err)
+				return fmt.Errorf("failed to generate rules: %v", err)
 			}
-
-			// Format as markdown with raw ctx help
-			content := fmt.Sprintf(`# ctx Documentation
-
-%s
-`, strings.TrimSpace(string(output)))
 
 			// Write the file
 			if err := os.WriteFile(outputFile, []byte(content), 0644); err != nil {

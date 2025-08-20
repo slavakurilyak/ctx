@@ -36,17 +36,11 @@ Examples:
 				return fmt.Errorf("file %s already exists. Use --force to overwrite", outputFile)
 			}
 
-			// Get ctx help output
-			content, err := GetCtxHelp()
+			// Generate rules using the shared generator
+			markdownContent, err := GenerateRules(".aiassistant/rules/ctx.md")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to generate rules: %v", err)
 			}
-
-			// Format as markdown
-			markdownContent := fmt.Sprintf(`# ctx Documentation
-
-%s
-`, content)
 
 			// Write the file
 			if err := os.WriteFile(outputFile, []byte(markdownContent), 0644); err != nil {
