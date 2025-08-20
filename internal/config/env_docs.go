@@ -91,10 +91,10 @@ var (
 			Foreground(lipgloss.Color("#555555"))
 )
 
-// GenerateEnvSection creates the ENVIRONMENT section for help text
+// GenerateEnvSection creates the ENVIRONMENT VARIABLES section for help text
 func GenerateEnvSection() string {
 	var sb strings.Builder
-	sb.WriteString(envHeaderStyle.Render("ENVIRONMENT:") + "\n\n")
+	sb.WriteString(envHeaderStyle.Render("ENVIRONMENT VARIABLES:") + "\n\n")
 	sb.WriteString("  " + envDescStyle.Render("CLI flags take precedence over environment variables.") + "\n\n")
 
 	for _, env := range EnvVars {

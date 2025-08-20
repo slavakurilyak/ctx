@@ -287,6 +287,15 @@ go install .           # Install to $GOPATH/bin (usually ~/bin or ~/go/bin)
 ctx version            # Test global installation
 ```
 
+**Understanding `go build` vs `go install`:**
+
+| Aspect            | `go build -o ctx .`           | `go install .`              |
+|-------------------|-------------------------------|------------------------------|
+| Location          | Current directory             | `$GOPATH/bin`               |
+| PATH availability | No (unless you add `.` to PATH) | Yes (if `$GOPATH/bin` in PATH) |
+| Purpose           | Local testing/development     | System-wide installation    |
+| Clean up          | `rm ctx`                      | `rm $GOPATH/bin/ctx`        |
+
 ### Contributing
 
 Contributions are welcome! Please see the [Issues](https://github.com/slavakurilyak/ctx/issues) page for areas where help is needed.

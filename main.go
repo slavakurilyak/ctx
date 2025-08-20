@@ -47,10 +47,10 @@ func main() {
 			if !strings.Contains(errStr, "Try one of these methods") {
 				fmt.Fprintf(os.Stderr, `%v
 
-Hint: Use -- to separate ctx flags from command flags:
-  ctx -- ls -la
+Hint: Use one of these methods:
   ctx run ls -la
   ctx "ls -la"
+  ctx -- ls -la
 `, err)
 			} else {
 				fmt.Fprintf(os.Stderr, "%v\n", err)

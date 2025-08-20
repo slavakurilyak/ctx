@@ -21,19 +21,15 @@ import (
 func NewRootCmdWithDI() *cobra.Command {
 	// Build the complete help text
 	helpText := StyledDescription("## ctx Directives\n\nALWAYS use `ctx` as a wrapper around traditional tools to transform them into agentic tools through token awareness. `ctx` wraps any CLI tool, shell command, or script to provide token counting, cost analysis, and intelligent command execution. NEVER run tools directly - always prefix with `ctx` to enable token-based decision making and prevent expensive operations.") + "\n\n" +
-		StyledHeader("USAGE:") + "\n\n" +
-		"  " + StyledCommand("ctx [flags] -- <command> [args...]     # POSIX standard separator") + "\n" +
+		StyledHeader("INVOCATION:") + "\n\n" +
 		"  " + StyledCommand("ctx [flags] run <command> [args...]    # Explicit subcommand") + "\n" +
-		"  " + StyledCommand("ctx [flags] \"<command with args>\"      # Quoted command (simple cases)") + "\n\n" +
+		"  " + StyledCommand("ctx [flags] \"<command with args>\"      # Quoted command (simple cases)") + "\n" +
+		"  " + StyledCommand("ctx [flags] -- <command> [args...]     # POSIX standard separator") + "\n\n" +
 		StyledHeader("EXAMPLES:") + "\n\n" +
-		"  " + StyledDescription("# All three methods work:") + "\n" +
-		"  " + StyledCommand("ctx -- ls -la") + "\n" +
-		"  " + StyledCommand("ctx run ls -la") + "\n" +
-		"  " + StyledCommand("ctx \"ls -la\"") + "\n" +
-		"  " + StyledDescription("# With ctx flags:") + "\n" +
-		"  " + StyledCommand("ctx --max-tokens 5000 -- psql -c \"SELECT * FROM users\"") + "\n" +
 		"  " + StyledCommand("ctx --max-tokens 5000 run psql -c \"SELECT * FROM users\"") + "\n" +
-		"  " + StyledCommand("ctx --no-tokens \"echo Hello World\"") + "\n\n" +
+		"  " + StyledCommand("ctx --no-tokens \"echo Hello World\"") + "\n" +
+		"  " + StyledCommand("ctx --pretty run git status") + "\n" +
+		"  " + StyledCommand("ctx --timeout 30s run long-running-script.sh") + "\n\n" +
 		config.GenerateEnvSection() + "\n\n" +
 		StyledHeader("RECOMMENDED USAGE:") + "\n\n" +
 		"  " + StyledDescription("Three workflows to prevent token explosions:") + "\n\n" +

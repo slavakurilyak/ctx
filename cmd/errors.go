@@ -27,17 +27,17 @@ It looks like ctx is trying to parse your command's flags as its own.
 
 Try one of these methods:
 
-  1. Using -- separator (POSIX standard):
-     ctx -- %s
-     ctx --max-tokens 5000 -- %s
-  
-  2. Using run subcommand:
+  1. Using run subcommand:
      ctx run %s
      ctx --max-tokens 5000 run %s
   
-  3. Using quotes (for simple commands):
+  2. Using quotes (for simple commands):
      ctx "%s"
      ctx --max-tokens 5000 "%s"
+  
+  3. Using -- separator (POSIX standard):
+     ctx -- %s
+     ctx --max-tokens 5000 -- %s
 
 Remember: ctx flags (like --max-tokens) must come BEFORE the separator or subcommand.`,
 			err.Error(),
