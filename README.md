@@ -54,26 +54,26 @@ This simple pattern transforms an expensive operation into a negligible one.
 
 **Want to see your favorite AI tool supported?** [Request a new integration](https://github.com/slavakurilyak/ctx/issues/new?title=Integration%20Request:%20[Tool%20Name]&body=Please%20add%20support%20for%20[Tool%20Name]%0A%0AOfficial%20site:%20%0ADocs:%20%0AHow%20it%20handles%20custom%20instructions:%20) by creating a GitHub issue.
 
-| Agent | Links | Compatible with ctx | AGENTS.md Support |
+| Agent | Links | AGENTS.md Support | Compatible with ctx |
 |-------|-------|---------------------|-------------------|
-| **Claude Code** | [Official site](https://www.anthropic.com/claude-code) \| [Docs](https://docs.anthropic.com/en/docs/claude-code/overview) | ✓ (via `ctx setup claude`) | ✗ |
-| **Gemini CLI** | [Official site](https://ai.google.dev/docs/gemini_cli) \| [GitHub](https://github.com/google-gemini/gemini-cli) \| [Docs](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gcloud.md) | ✓ (via `ctx setup gemini`) | ✗ |
-| **Kilo Code** | [Official site](https://kilocode.ai/) \| [Docs](https://kilocode.ai/docs) | ✓ (via `ctx setup kilo-code`) | ✗ |
-| **Roo Code** | [Official site](https://roocode.com/) \| [Docs](https://docs.roocode.com/) | ✓ (via `ctx setup roo-code`) | ✓ |
-| **Cursor** | [Official site](https://cursor.sh/) \| [Docs](https://cursor.sh/help) | ✓ (via `ctx setup cursor`) | ✓ |
-| **Aider** | [Official site](https://aider.chat/) \| [GitHub](https://github.com/Aider-AI/aider) \| [Docs](https://aider.chat/docs/) | ✓ (via `ctx setup aider`) | ✗ |
-| **JetBrains AI Assistant** | [Official site](https://www.jetbrains.com/ai-assistant/) \| [Docs](https://www.jetbrains.com/help/ai-assistant/) | ✓ (via `ctx setup jetbrains`) | ✗ |
-| **Zed** | [Official site](https://zed.dev/) \| [GitHub](https://github.com/zed-industries/zed) \| [Docs](https://zed.dev/docs) | ✓ (via `ctx setup zed`) | ✗ |
-| **GitHub Copilot** | [Official site](https://github.com/features/copilot) \| [Docs](https://docs.github.com/en/copilot) | ✓ (via `ctx setup github-copilot`) | ✗ |
-| **Windsurf** | [Official site](https://windsurf.ai/) \| [GitHub](https://github.com/Windsurf-AI/windsurf) \| [Docs](https://docs.windsurf.com/) | ✓ (via `ctx setup windsurf`) | ✗ |
-| **Cline** | [Official site](https://cline.bot/) \| [GitHub](https://github.com/re-search/cline) | ✓ (via `ctx setup cline`) | ✗ |
-| **Goose** | [Official site](https://block.github.io/goose/) \| [GitHub](https://github.com/block/goose) \| [Docs](https://block.github.io/goose/docs/) | ✓ (via `ctx setup goose`) | ✗ |
-| **Visual Studio Code** | [Official site](https://code.visualstudio.com/) \| [GitHub](https://github.com/microsoft/vscode) \| [Docs](https://code.visualstudio.com/docs) | ✗ | ✗ |
-| **Visual Studio 2022** | [Official site](https://visualstudio.microsoft.com/) \| [Docs](https://learn.microsoft.com/en-us/visualstudio/windows/) | ✗ | ✗ |
-| **OpenCode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✓ (via `ctx setup opencode`) | ✓ |
-| **Augment Code** | [Official site](https://www.augmentcode.com/) \| [Docs](https://www.augmentcode.com/docs/getting-started) | ✗ | ✗ |
+| **Claude Code** | [Official site](https://www.anthropic.com/claude-code) \| [Docs](https://docs.anthropic.com/en/docs/claude-code/overview) | ✗ | ✓ (via `ctx setup claude`) |
+| **Gemini CLI** | [Official site](https://ai.google.dev/docs/gemini_cli) \| [GitHub](https://github.com/google-gemini/gemini-cli) \| [Docs](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gcloud.md) | ✗ | ✓ (via `ctx setup gemini`) |
+| **Kilo Code** | [Official site](https://kilocode.ai/) \| [Docs](https://kilocode.ai/docs) | ✗ | ✓ (via `ctx setup kilo-code`) |
+| **Roo Code** | [Official site](https://roocode.com/) \| [Docs](https://docs.roocode.com/) | ✓ | ✓ (via `ctx setup roo-code`) |
+| **Cursor** | [Official site](https://cursor.sh/) \| [Docs](https://cursor.sh/help) | ✓ | ✓ (via `ctx setup cursor`) |
+| **Aider** | [Official site](https://aider.chat/) \| [GitHub](https://github.com/Aider-AI/aider) \| [Docs](https://aider.chat/docs/) | ✗ | ✓ (via `ctx setup aider`) |
+| **JetBrains AI Assistant** | [Official site](https://www.jetbrains.com/ai-assistant/) \| [Docs](https://www.jetbrains.com/help/ai-assistant/) | ✗ | ✓ (via `ctx setup jetbrains`) |
+| **Zed** | [Official site](https://zed.dev/) \| [GitHub](https://github.com/zed-industries/zed) \| [Docs](https://zed.dev/docs) | ✗ | ✓ (via `ctx setup zed`) |
+| **GitHub Copilot** | [Official site](https://github.com/features/copilot) \| [Docs](https://docs.github.com/en/copilot) | ✗ | ✓ (via `ctx setup github-copilot`) |
+| **Windsurf** | [Official site](https://windsurf.ai/) \| [GitHub](https://github.com/Windsurf-AI/windsurf) \| [Docs](https://docs.windsurf.com/) | ✗ | ✓ (via `ctx setup windsurf`) |
+| **Cline** | [Official site](https://cline.bot/) \| [GitHub](https://github.com/re-search/cline) | ✗ | ✓ (via `ctx setup cline`) |
+| **Goose** | [Official site](https://block.github.io/goose/) \| [GitHub](https://github.com/block/goose) \| [Docs](https://block.github.io/goose/docs/) | ✗ | ✓ (via `ctx setup goose`) |
+| **Visual Studio Code** | [Official site](https://code.visualstudio.com/) \| [GitHub](https://github.com/microsoft/vscode) \| [Docs](https://code.visualstudio.com/docs) | ✗ | ✓ (via `ctx setup vscode`) |
+| **Visual Studio 2022** | [Official site](https://visualstudio.microsoft.com/) \| [Docs](https://learn.microsoft.com/en-us/visualstudio/windows/) | ✗ | ✓ (via `ctx setup visualstudio`) |
+| **Augment Code** | [Official site](https://www.augmentcode.com/) \| [Docs](https://www.augmentcode.com/docs/getting-started) | ✗ | ✓ (via `ctx setup augmentcode`) |
+| **OpenCode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✓ | ✓ (via `ctx setup opencode`) |
+| **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✗ | ✓ (via `ctx setup trae`) |
 | **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ | ✗ |
-| **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✓ (via `ctx setup trae`) | ✗ |
 | **Zencoder** | [Official site](https://www.zencoder.dev/) \| [GitHub](https://github.com/zencoder-platform/zencoder) | ✗ | ✗ |
 | **Qodo Gen** | [Official site](https://qodo.ai/) \| [Docs](https://docs.qodo.ai/) | ✗ | ✗ |
 | **Warp Terminal** | [Official site](https://www.warp.dev/) \| [Docs](https://docs.warp.dev/) | ✗ | ✗ |
@@ -164,8 +164,11 @@ ctx setup
 ctx setup claude        # Claude Code/Desktop  
 ctx setup cursor        # Cursor IDE
 ctx setup aider         # Aider
+ctx setup augmentcode   # Augment Code
 ctx setup windsurf      # Windsurf IDE
 ctx setup jetbrains     # JetBrains AI Assistant
+ctx setup vscode        # VS Code with GitHub Copilot
+ctx setup visualstudio  # Visual Studio 2022
 ctx setup gemini        # Gemini CLI
 ctx setup goose         # Goose AI Agent
 ctx setup trae          # Trae IDE
@@ -204,15 +207,18 @@ ctx git diff --staged | claude -p 'Generate a conventional commit message.'
 ctx setup
 
 # Or set up a specific AI tool:
-ctx setup claude    # Explicit Claude Code setup
-ctx setup cursor    # Cursor IDE
-ctx setup aider     # Aider
-ctx setup windsurf  # Windsurf IDE
-ctx setup goose     # Goose AI Agent
-ctx setup jetbrains # JetBrains AI Assistant
-ctx setup gemini    # Gemini CLI
-ctx setup trae      # Trae IDE
-ctx setup opencode   # OpenCode
+ctx setup claude        # Explicit Claude Code setup
+ctx setup cursor        # Cursor IDE
+ctx setup aider         # Aider
+ctx setup augmentcode   # Augment Code
+ctx setup windsurf      # Windsurf IDE
+ctx setup vscode        # VS Code with GitHub Copilot
+ctx setup visualstudio  # Visual Studio 2022
+ctx setup goose         # Goose AI Agent
+ctx setup jetbrains     # JetBrains AI Assistant
+ctx setup gemini        # Gemini CLI
+ctx setup trae          # Trae IDE
+ctx setup opencode      # OpenCode
 ```
 These commands create local configuration files that instruct your IDE's AI to wrap shell commands with `ctx`, promoting token-efficient workflows.
 

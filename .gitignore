@@ -52,6 +52,10 @@ __debug_bin
 tmp/
 stream_output.txt
 test-config.yaml
+ctx_output.txt
+final_output.txt
+test_*.txt
+test_*.md
 
 # Log files
 *.log
@@ -84,6 +88,7 @@ AGENTS.md
 
 # User files
 USER-*.md
+plans/
 
 # AI files
 AI-*.md

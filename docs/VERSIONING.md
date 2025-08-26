@@ -100,14 +100,70 @@ When schema version changes:
 - Schema major version changes
 - Migration guide required
 
-## Git Tags
+## Creating a Release
 
-Use annotated tags for releases:
+### Prerequisites
+- All tests passing (`go test ./...`)
+- Version updated if needed
+- Changes committed to main branch
+
+### Release Steps
+
+1. **Create an annotated tag:**
 ```bash
-git tag -a v1.2.3 -m "Release version 1.2.3"
+# Format: v{MAJOR}.{MINOR}.{PATCH}
+git tag -a v0.1.4 -m "Release v0.1.4"
 ```
 
-Tags should match the software version with a `v` prefix.
+2. **Push the tag to trigger automated release:**
+```bash
+git push origin v0.1.4
+```
+
+3. **Monitor the release:**
+```bash
+# Watch GitHub Actions progress
+gh run watch
+
+# View the release once complete
+gh release view v0.1.4
+```
+
+### What Happens Next
+
+When you push a tag:
+1. GitHub Actions workflow triggers automatically
+2. GoReleaser builds binaries for all platforms (Linux, macOS, Windows)
+3. Changelog is auto-generated from commit messages
+4. GitHub Release is created with all artifacts
+5. Installation scripts are updated to use the new version
+
+### Commit Message Convention
+
+For automatic changelog generation, use conventional commits:
+- `feat:` New features → appears in "🚀 Features"
+- `fix:` Bug fixes → appears in "🐛 Bug Fixes"  
+- `docs:` Documentation → appears in "📚 Documentation"
+- `perf:` Performance improvements → appears in "⚡ Performance"
+- `refactor:` Code refactoring → appears in "♻️ Refactoring"
+- `chore:` Maintenance tasks → appears in "🔧 Other"
+
+Example:
+```bash
+git commit -m "feat: add support for VS Code custom instructions"
+git commit -m "fix: correct token counting for large outputs"
+```
+
+### Emergency Rollback
+
+If a release has critical issues:
+```bash
+# Delete the tag locally and remotely
+git tag -d v0.1.4
+git push origin :v0.1.4
+
+# Fix the issue, then create a new release
+```
 
 ## Checking Versions
 

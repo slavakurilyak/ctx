@@ -57,6 +57,9 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewGooseCmd())
 	setupCmd.AddCommand(setup.NewTraeCmd())
 	setupCmd.AddCommand(setup.NewOpenCodeCmd())
+	setupCmd.AddCommand(setup.NewVSCodeCmd())
+	setupCmd.AddCommand(setup.NewVisualStudioCmd())
+	setupCmd.AddCommand(setup.NewAugmentCodeCmd())
 
 	return setupCmd
 }
@@ -82,9 +85,12 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup aider         # Aider")
 	fmt.Println("  ctx setup windsurf      # Windsurf IDE")
 	fmt.Println("  ctx setup jetbrains     # JetBrains AI Assistant")
+	fmt.Println("  ctx setup augmentcode   # Augment Code")
 	fmt.Println("  ctx setup gemini        # Gemini CLI")
 	fmt.Println("  ctx setup zed           # Zed Editor")
 	fmt.Println("  ctx setup github-copilot # GitHub Copilot")
+	fmt.Println("  ctx setup vscode        # VS Code with GitHub Copilot")
+	fmt.Println("  ctx setup visualstudio  # Visual Studio 2022")
 	fmt.Println("  ctx setup cline         # Cline")
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
