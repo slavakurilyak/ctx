@@ -9,7 +9,7 @@
 
 # Context (ctx) - The Context Engine for AI Agents
 
-> **Slash AI costs by 95%: From $1,125 to just $10/month - the price of the upcoming ctx Pro subscription!**
+> **Slash AI costs by 95%: From $1,125 to just $10/agent/month - the price of the upcoming ctx Pro subscription!**
 
 [![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)](https://github.com/slavakurilyak/ctx/releases)
 [![Beta](https://img.shields.io/badge/status-beta-yellow.svg)](docs/VERSIONING.md)
@@ -17,7 +17,7 @@
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Beta Software**: `ctx` is in beta (v0.1.1). The API and schema may change. See [CHANGELOG.md](docs/CHANGELOG.md) for release history.
+**Beta Software**: `ctx` is in beta. The API and schema may change. See [CHANGELOG.md](docs/CHANGELOG.md) for release history.
 
 Modern AI agents struggle with external tools because raw command output is token-expensive, unstructured, and lacks metadata. This wastes context windows and drives up costs.
 
@@ -50,7 +50,7 @@ This simple pattern transforms an expensive operation into a negligible one.
 
 `ctx` integrates with leading AI coding assistants and agentic IDEs through simple setup commands. We're constantly expanding support to include more tools based on community needs.
 
-**NEW: AGENTS.md Support** - `ctx` now supports the [AGENTS.md standard](https://agents.md/), an open format for guiding coding agents that works across multiple AI tools. Run `ctx setup agents` to generate a universal AGENTS.md file that's compatible with Cursor, RooCode, OpenCode, and other agents that support this standard.
+**AGENTS.md Support** - `ctx` now supports the [AGENTS.md standard](https://agents.md/), an open format for guiding coding agents that works across multiple AI tools. Run `ctx setup agents` to generate a universal AGENTS.md file that's compatible with Cursor, RooCode, OpenCode, and other agents that support this standard.
 
 **Want to see your favorite AI tool supported?** [Request a new integration](https://github.com/slavakurilyak/ctx/issues/new?title=Integration%20Request:%20[Tool%20Name]&body=Please%20add%20support%20for%20[Tool%20Name]%0A%0AOfficial%20site:%20%0ADocs:%20%0AHow%20it%20handles%20custom%20instructions:%20) by creating a GitHub issue.
 
@@ -210,15 +210,7 @@ ctx setup
 ctx setup claude        # Explicit Claude Code setup
 ctx setup cursor        # Cursor IDE
 ctx setup aider         # Aider
-ctx setup augmentcode   # Augment Code
-ctx setup windsurf      # Windsurf IDE
-ctx setup vscode        # VS Code with GitHub Copilot
-ctx setup visualstudio  # Visual Studio 2022
-ctx setup goose         # Goose AI Agent
-ctx setup jetbrains     # JetBrains AI Assistant
-ctx setup gemini        # Gemini CLI
-ctx setup trae          # Trae IDE
-ctx setup opencode      # OpenCode
+[...]
 ```
 These commands create local configuration files that instruct your IDE's AI to wrap shell commands with `ctx`, promoting token-efficient workflows.
 
@@ -226,7 +218,7 @@ These commands create local configuration files that instruct your IDE's AI to w
 
 ## Coming Soon: `ctx Pro`
 
-**`ctx Pro`** enhances your ctx experience with powerful analytics and team collaboration features for just **$10/month**.
+**`ctx Pro`** enhances your ctx experience with powerful analytics and team collaboration features for just **$10/agent/month**.
 
 - **Web Dashboard**: Access a comprehensive dashboard to visualize your command-line usage patterns, most frequently used tools, and command history analytics.
 - **Usage Insights**: Discover which tools consume the most tokens, identify optimization opportunities, and track your token savings over time.

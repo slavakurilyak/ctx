@@ -1,8 +1,8 @@
 # ctx Pro Pricing (Coming Soon)
 
-## The Insane Math: $1,125 → $10/month
+## The Insane Math: $1,125 → $10/agent/month
 
-With ctx Pro's 95% token reduction (coming soon), your TOTAL AI costs will become just the $10/month subscription.
+With ctx Pro's 95% token reduction (coming soon), your TOTAL AI costs will become just the $10/agent/month subscription.
 That's a 99.1% cost reduction when you factor in the eliminated token costs!
 
 ### Cost Comparison
@@ -23,7 +23,7 @@ That's a 99.1% cost reduction when you factor in the eliminated token costs!
 ctx Pro will offer flexible pricing options for individuals and teams:
 
 ### Individual Plan
-**$10 per user/month** *(Your entire AI cost after 95% token reduction!)*
+**$10/agent/month** *(per user - Your entire AI cost after 95% token reduction!)*
 
 Perfect for individual developers who want to enhance their command-line experience with intelligent features.
 
