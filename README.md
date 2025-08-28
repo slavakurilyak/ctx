@@ -75,9 +75,9 @@ This simple pattern transforms an expensive operation into a negligible one.
 | **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✗ | ✓ (via `ctx setup trae`) |
 | **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ | ✓ (via `ctx setup amazonq`) |
 | **Zencoder** | [Official site](https://www.zencoder.dev/) \| [GitHub](https://github.com/zencoder-platform/zencoder) | ✗ | ✓ (via `ctx setup zencoder`) |
-| **Qodo Gen** | [Official site](https://qodo.ai/) \| [Docs](https://docs.qodo.ai/) | ✗ | ✗ |
-| **Warp Terminal** | [Official site](https://www.warp.dev/) \| [Docs](https://docs.warp.dev/) | ✗ | ✗ |
-| **Crush** | [Official site](https://charm.land/) \| [GitHub](https://github.com/charmbracelet/crush) | ✗ | ✗ |
+| **Qodo Gen** | [Official site](https://qodo.ai/) \| [Docs](https://docs.qodo.ai/) | ✗ | ✓ (via `ctx setup qodo`) |
+| **Warp Terminal** | [Official site](https://www.warp.dev/) \| [Docs](https://docs.warp.dev/) | ✗ | ✓ (via `ctx setup warp`) |
+| **Crush** | [Official site](https://charm.land/) \| [GitHub](https://github.com/charmbracelet/crush) | ✗ | ✓ (via `ctx setup crush`) |
 | **Rovo Dev CLI** | [Official site](https://rovodev.com/) \| [GitHub](https://github.com/rovotech/rovodev) | ✗ | ✗ |
 | **LM Studio** | [Official site](https://lmstudio.ai/) \| [Docs](https://lmstudio.ai/docs/welcome) | ✗ | ✗ |
 | **BoltAI** | [Official site](https://boltai.com/) \| [Docs](https://docs.boltai.com/) | ✗ | ✗ |

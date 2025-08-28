@@ -62,6 +62,9 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewAugmentCodeCmd())
 	setupCmd.AddCommand(setup.NewAmazonQCmd())
 	setupCmd.AddCommand(setup.NewZencoderCmd())
+	setupCmd.AddCommand(setup.NewQodoCmd())
+	setupCmd.AddCommand(setup.NewWarpCmd())
+	setupCmd.AddCommand(setup.NewCrushCmd())
 
 	return setupCmd
 }
@@ -95,6 +98,9 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup visualstudio  # Visual Studio 2022")
 	fmt.Println("  ctx setup amazonq       # Amazon Q Developer")
 	fmt.Println("  ctx setup zencoder      # Zencoder")
+	fmt.Println("  ctx setup qodo          # Qodo Gen")
+	fmt.Println("  ctx setup warp          # Warp Terminal")
+	fmt.Println("  ctx setup crush         # Crush Terminal")
 	fmt.Println("  ctx setup cline         # Cline")
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
