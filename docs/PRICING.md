@@ -9,8 +9,8 @@ That's a 99.1% cost reduction when you factor in the eliminated token costs!
 | | Without ctx | With ctx Pro |
 |---|---|---|
 | **Token Costs** | $1,125/month | ~$0/month |
-| **Subscription** | $0 | $10/month |
-| **Total Monthly Cost** | $1,125/month | $10/month |
+| **Subscription** | $0 | $10/agent/month |
+| **Total Monthly Cost** | $1,125/month | $10/agent/month |
 | **Monthly Savings** | - | **$1,115/month** |
 | **Annual Savings** | - | **$13,380/year** |
 
@@ -20,27 +20,20 @@ That's a 99.1% cost reduction when you factor in the eliminated token costs!
 
 **Note: ctx Pro is coming soon! The pricing information below shows what will be available once launched.**
 
-ctx Pro will offer flexible pricing options for individuals and teams:
+ctx Pro uses simple per-agent pricing with volume discounts for teams:
 
-### Individual Plan
-**$10/agent/month** *(per user - Your entire AI cost after 95% token reduction!)*
+### Per-Agent Pricing
+**$10/agent/month** *(Your entire AI cost after 95% token reduction!)*
 
-Perfect for individual developers who want to enhance their command-line experience with intelligent features.
+Perfect for individual developers and teams of any size who want to enhance their command-line experience with intelligent features.
 
-Features include:
+All features included:
 - Pre-tool-use command analysis and optimization
 - Post-tool-use insights and recommendations
 - Command blocking for dangerous operations
 - Token-aware command execution
 - Secure credential storage
 - All webhook integrations
-
-### Team Plan
-**$20 per seat/month**
-
-Designed for development teams who need centralized control and monitoring.
-
-Everything in Individual Plan, plus:
 - Centralized team management
 - Shared security policies
 - Team-wide command analytics
@@ -48,10 +41,16 @@ Everything in Individual Plan, plus:
 - Priority support
 - Audit logs
 
+### Volume Discounts
+- **1-4 agents**: $10/agent/month
+- **5-9 agents**: $9/agent/month (10% discount)
+- **10-24 agents**: $8/agent/month (20% discount)
+- **25+ agents**: Contact for custom pricing
+
 ## Billing
 
 - **Billing Cycle**: Monthly or Annual (20% discount on annual plans)
-- **Payment Methods**: Credit card, PayPal, or invoice (for teams > 10 seats)
+- **Payment Methods**: Credit card, PayPal, or invoice (for teams > 10 agents)
 - **Currency**: USD (other currencies available upon request)
 
 ## Getting Started (Coming Soon)
@@ -65,9 +64,9 @@ Once ctx Pro launches, you'll be able to:
 
 ## Usage Examples
 
-### Individual User
+### Single Developer
 ```bash
-# Login with individual API key
+# Login with API key
 $ echo "your-api-key" | ctx login
 
 # Check account status
@@ -80,30 +79,32 @@ Status:      Active
 Valid Until: 2025-02-13
 
 Billing Information:
-  Plan:         individual
-  Price:        $10.00 USD/monthly
+  Plan:         per-agent
+  Price:        $10.00 USD/agent/month
+  Agents:       1
+  Total:        $10.00 USD/monthly
   Next Billing: 2025-02-13
 ```
 
-### Team User
+### Team (5 Developers)
 ```bash
 # Login with team API key
 $ echo "team-api-key" | ctx login
 
-# Check account status with team pricing
+# Check account status with volume discount
 $ ctx account
 ctx Pro Account Status
 ======================
-Email:       developer@company.com
+Email:       admin@company.com
 Tier:        pro
 Status:      Active
 Valid Until: 2025-02-13
 
 Billing Information:
-  Plan:         team
-  Price:        $20.00 USD/monthly
-  Seats:        5
-  Total:        $100.00 USD/monthly
+  Plan:         per-agent
+  Price:        $9.00 USD/agent/month (10% volume discount)
+  Agents:       5
+  Total:        $45.00 USD/monthly
   Next Billing: 2025-02-13
 ```
 
@@ -136,7 +137,7 @@ Pro accounts unlock powerful webhook integrations:
 **With ctx Pro:**
 - Reduced tokens: ~30,000/month (95% reduction)
 - Token cost: ~$4.50/month
-- ctx Pro subscription: $10/month
+- ctx Pro subscription: $10/agent/month
 - **Total: $14.50/month**
 - **Savings: $1,110.50/month (98.7% reduction)**
 
