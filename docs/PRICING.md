@@ -57,10 +57,10 @@ All features included:
 
 Once ctx Pro launches, you'll be able to:
 
-1. **Sign up** at [ctx.click](https://ctx.click)
-2. **Get your API key** from your dashboard
-3. **Login** using `ctx login` with your API key (currently WIP)
-4. **Check status** with `ctx account` to view your plan details (currently WIP)
+1. **Sign up** at [ctx.click](https://ctx.click) (coming soon)
+2. **Get your API key** from your dashboard (coming soon)
+3. **Login** using `ctx login` with your API key (coming soon)
+4. **Check status** with `ctx account` to view your plan details (coming soon)
 
 ## Usage Examples
 
