@@ -73,7 +73,7 @@ This simple pattern transforms an expensive operation into a negligible one.
 | **Augment Code** | [Official site](https://www.augmentcode.com/) \| [Docs](https://www.augmentcode.com/docs/getting-started) | ✗ | ✓ (via `ctx setup augmentcode`) |
 | **OpenCode** | [Official site](https://opencode.ai/) \| [Docs](https://opencode.ai/docs) | ✓ | ✓ (via `ctx setup opencode`) |
 | **Trae** | [Official site](https://trae.ai/) \| [Docs](https://docs.trae.ai/) | ✗ | ✓ (via `ctx setup trae`) |
-| **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ | ✗ |
+| **Amazon Q Developer** | [Official site](https://aws.amazon.com/q/developer/) \| [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html) | ✗ | ✓ (via `ctx setup amazonq`) |
 | **Zencoder** | [Official site](https://www.zencoder.dev/) \| [GitHub](https://github.com/zencoder-platform/zencoder) | ✗ | ✗ |
 | **Qodo Gen** | [Official site](https://qodo.ai/) \| [Docs](https://docs.qodo.ai/) | ✗ | ✗ |
 | **Warp Terminal** | [Official site](https://www.warp.dev/) \| [Docs](https://docs.warp.dev/) | ✗ | ✗ |

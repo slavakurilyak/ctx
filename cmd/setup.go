@@ -60,6 +60,7 @@ When no tool is specified:
 	setupCmd.AddCommand(setup.NewVSCodeCmd())
 	setupCmd.AddCommand(setup.NewVisualStudioCmd())
 	setupCmd.AddCommand(setup.NewAugmentCodeCmd())
+	setupCmd.AddCommand(setup.NewAmazonQCmd())
 
 	return setupCmd
 }
@@ -91,6 +92,7 @@ func showAvailableTools() error {
 	fmt.Println("  ctx setup github-copilot # GitHub Copilot")
 	fmt.Println("  ctx setup vscode        # VS Code with GitHub Copilot")
 	fmt.Println("  ctx setup visualstudio  # Visual Studio 2022")
+	fmt.Println("  ctx setup amazonq       # Amazon Q Developer")
 	fmt.Println("  ctx setup cline         # Cline")
 	fmt.Println("  ctx setup roo-code      # Roo Code")
 	fmt.Println("  ctx setup kilo-code     # Kilo Code")
